@@ -8,10 +8,11 @@
     <style>
       html {
         align-items: center;
-        background: url("grass.jpg") center / 256px repeat;
+        background: url("grass.jpg") center / 16rem repeat;
         display: flex;
         font-family: "Tahoma", "Arial", sans-serif;
         font-size: 0.8rem;
+        height: 100vh;
         justify-content: center;
       }
 
@@ -28,14 +29,14 @@
         background-color: white;
         display: flex;
         flex-direction: column;
-        height: calc(100vh - 80px);
+        height: calc(100vh - 15rem);
         margin: 0 auto;
-        padding: 40px;
-        width: 640px;
+        padding: 4rem;
+        width: 50rem;
       }
 
       h1 {
-        margin-top: 0px;
+        margin-top: 0;
       }
 
       ul, ol {
@@ -46,7 +47,7 @@
 
       #gci {
         display: block;
-        padding: 10px 0px;
+        padding: 1rem 0;
       }
 
       #fileError {
@@ -90,7 +91,6 @@
     </div>
 
     <script>
-      const correctFileName = "01-GAFE-DobutsunomoriP_MURA.gci";
       const fileError = document.getElementById("fileError");
       const gci = document.getElementById("gci");
       const hex = document.getElementById("hex");
@@ -99,34 +99,40 @@
       let uploadedFile;
 
       gci.addEventListener("change", (event) => {
-        uploads = event.target.files;
-
-        if (uploads.length > 0) {
-          uploadedFile = uploads[0];
-
-          if (uploadedFile.name != correctFileName) {
-            fileError.innerText = `Please make sure to upload ${correctFileName}`;
-          }
-          else {
-            fileError.innerText = "";
-            getFileContents();
-          }
-        }
-      });
-
-      function getFileContents() {
         const reader = new FileReader();
+        uploads = event.target.files;
+        uploadedFile = uploads[0]
+
         reader.readAsArrayBuffer(uploadedFile);
 
         reader.addEventListener("load", (event) => {
-          const buffer = event.target.result;
-          const array = new Uint8Array(buffer);
+          const fileBuffer = event.target.result;
+          const fileArray = new Uint8Array(fileBuffer);
 
-          const start = parseInt("0003D3E8", 16);
-          const end = parseInt("0003D473", 16);
+          const gafStart = parseInt("00000000", 16);
+          const gafEnd = parseInt("00000005", 16);
 
-          const slicedData = array.slice(start, end + 1);
+          let gafStr = getHexString(fileArray, "00000000", "00000005");
+          console.log(gafStr);
+
+          let muraStr = getHexString(fileArray, "00000008", "0000001A");
+          console.log(muraStr);
         });
+      });
+
+      function getHexString(array, startHex, endHex) {
+        const start = parseInt(startHex, 16);
+        const end = parseInt(endHex, 16);
+        const sliced = array.slice(start, end + 1);
+        let valueStr = "";
+
+        for (let i = 0; i < sliced.length; i++) {
+          const intChar = parseInt(sliced[i].toString(16), 16);
+          const strChar = String.fromCharCode(intChar);
+          valueStr += strChar;
+        }
+        
+        return valueStr;
       }
     </script>
   </body>
