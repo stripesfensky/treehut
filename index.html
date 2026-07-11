@@ -50,10 +50,6 @@
         padding: 1rem 0;
       }
 
-      #fileError {
-        color: red;
-      }
-
       #main {
         flex: 1;
       }
@@ -63,7 +59,7 @@
     <div id="main">
       <h1>Animal Crossing Tree Growth Map</h1>
       <form id="upload">
-        <label for="gci">Upload your <i>Animal Crossing</i> (USA) save file in ".gci" format.<br />
+        <label for="gci">Upload your <i>Animal Crossing</i> save file in the .GCI format.<br />
           Your file is never uploaded to a server; contents are only stored in your browser's memory.
         </label>
         <input type="file" id="gci" name="gci" accept=".gci">
@@ -113,10 +109,18 @@
           const gafEnd = parseInt("00000005", 16);
 
           let gafStr = getHexString(fileArray, "00000000", "00000005");
-          console.log(gafStr);
-
+          let gafTest = RegExp("GAF\[A-Z]01").test(gafStr);
           let muraStr = getHexString(fileArray, "00000008", "0000001A");
-          console.log(muraStr);
+          let muraTest = RegExp("DobutsunomoriP_MURA").test(muraStr);
+          
+          if (gafTest == false || muraTest == false) {
+            fileError.innerHTML = "You have uploaded an invalid save file."
+            fileError.style.color = "red";
+          }
+          else {
+            fileError.innerHTML = "You have uploaded a valid save file."
+            fileError.style.color = "green";
+          }
         });
       });
 
