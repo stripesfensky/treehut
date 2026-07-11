@@ -105,9 +105,6 @@
           const fileBuffer = event.target.result;
           const fileArray = new Uint8Array(fileBuffer);
 
-          const gafStart = parseInt("00000000", 16);
-          const gafEnd = parseInt("00000005", 16);
-
           let gafStr = getHexString(fileArray, "00000000", "00000005");
           let gafTest = RegExp("GAF\[A-Z]01").test(gafStr);
           let muraStr = getHexString(fileArray, "00000008", "0000001A");
@@ -121,13 +118,23 @@
             fileError.innerHTML = "You have uploaded a valid save file."
             fileError.style.color = "green";
           }
+
+          return;
         });
+
+        return;
       });
 
-      function getHexString(array, startHex, endHex) {
+      function getSlicedArray(array, startHex, endHex) {
         const start = parseInt(startHex, 16);
         const end = parseInt(endHex, 16);
         const sliced = array.slice(start, end + 1);
+
+        return sliced;
+      }
+
+      function getHexString(array, startHex, endHex) {
+        const sliced = getSlicedArray(array, startHex, endHex);
         let valueStr = "";
 
         for (let i = 0; i < sliced.length; i++) {
@@ -137,6 +144,11 @@
         }
         
         return valueStr;
+      }
+
+      function getAcreHex(array, startHex, endHex) {
+        const sliced = getSlicedArray(array, startHex, endHex);
+
       }
     </script>
   </body>
