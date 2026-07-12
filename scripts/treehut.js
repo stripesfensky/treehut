@@ -97,6 +97,7 @@ function getAcreHex(array, startHex, endHex) {
     }
   }
 
+  map.innerHTML = "<h2>Map</h2>"
   map.appendChild(table);
   return;
 }
