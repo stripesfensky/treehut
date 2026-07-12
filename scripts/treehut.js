@@ -1,12 +1,14 @@
 const fileError = document.getElementById("fileError");
 const gci = document.getElementById("gci");
 const hex = document.getElementById("hex");
+const map = document.getElementById("map");
 const uploadForm = document.getElementById("upload").reset();
 let uploads;
 let uploadedFile;
 
 gci.addEventListener("change", (event) => {
   const reader = new FileReader();
+  map.innerHTML = "";
   uploads = event.target.files;
   uploadedFile = uploads[0]
 
@@ -38,7 +40,6 @@ gci.addEventListener("change", (event) => {
 function setFileError(message, color) {
     fileError.innerText = message;
     fileError.style.color = color;  
-    
     return;
 }
 
@@ -46,7 +47,6 @@ function getSlicedArray(array, startHex, endHex) {
   const start = parseInt(startHex, 16);
   const end = parseInt(endHex, 16);
   const sliced = array.slice(start, end + 1);
-
   return sliced;
 }
 
@@ -82,6 +82,22 @@ function getAcreHex(array, startHex, endHex) {
   }
 
   console.log(acreHex);
+
+  acreHexIdx = 0;
+
+  let table = document.createElement("table");
+
+  for (let mapRow = 0; mapRow < 10; mapRow++) {
+    let row = table.insertRow(-1);
+    
+    for (let mapCol = 0; mapCol < 7; mapCol++) {
+      let rowCol = row.insertCell(-1);
+      rowCol.innerText = acreHex[acreHexIdx];
+      acreHexIdx++;
+    }
+  }
+  console.log(table);
+  map.appendChild(table);
 
   return;
 }
