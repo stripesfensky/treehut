@@ -1,6 +1,6 @@
 html {
   align-items: center;
-  background: url("grass.jpg") center / 16rem repeat;
+  background: url("../assets/grass.jpg") center / 16rem repeat;
   display: flex;
   font-family: "Tahoma", "Arial", sans-serif;
   font-size: 0.8rem;
