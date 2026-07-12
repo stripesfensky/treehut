@@ -1,0 +1,47 @@
+html {
+  align-items: center;
+  background: url("grass.jpg") center / 16rem repeat;
+  display: flex;
+  font-family: "Tahoma", "Arial", sans-serif;
+  font-size: 0.8rem;
+  height: 100vh;
+  justify-content: center;
+}
+
+a {
+  color: blue;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+body {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 15rem);
+  margin: 0 auto;
+  padding: 4rem;
+  width: 50rem;
+}
+
+h1 {
+  margin-top: 0;
+}
+
+ul, ol {
+  list-style-position: inside;
+  list-style-type: square;
+  padding-left: 0;
+}
+
+#gci {
+  display: block;
+  padding: 1rem 0;
+}
+
+#main, #map {
+  flex: 1;
+}
