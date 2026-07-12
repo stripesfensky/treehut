@@ -50,7 +50,7 @@
         padding: 1rem 0;
       }
 
-      #main {
+      #main, #map {
         flex: 1;
       }
     </style>
@@ -66,6 +66,7 @@
       </form>
       <span id="fileError"></span><br />
     </div>
+    <div id="map"></div>
     <div id="credits">
       <h2>Credits</h2>
       <ul>
@@ -111,12 +112,11 @@
           let muraTest = RegExp("DobutsunomoriP_MURA").test(muraStr);
           
           if (gafTest == false || muraTest == false) {
-            fileError.innerHTML = "You have uploaded an invalid save file."
-            fileError.style.color = "red";
+            setFileError("This file is invalid.", "red");
           }
           else {
-            fileError.innerHTML = "You have uploaded a valid save file."
-            fileError.style.color = "green";
+            setFileError("This file is valid.", "green");
+            getAcreHex(fileArray, "0003D3E8", "0003D473");
           }
 
           return;
@@ -124,6 +124,13 @@
 
         return;
       });
+
+      function setFileError(message, color) {
+          fileError.innerText = message;
+          fileError.style.color = color;  
+          
+          return;
+      }
 
       function getSlicedArray(array, startHex, endHex) {
         const start = parseInt(startHex, 16);
@@ -148,7 +155,25 @@
 
       function getAcreHex(array, startHex, endHex) {
         const sliced = getSlicedArray(array, startHex, endHex);
+        
+        if (sliced.length / 2 != 70) {
+          setFileError("The acre data for this save file is invalid.");
+          return;
+        }
 
+        let acreHex = new Array(70);
+        let acreHexIdx = 0;
+
+        for (let i = 0; i < sliced.length; i += 2) {
+          const acreFirst = sliced[i].toString(16).padStart(2, "0").toUpperCase();
+          const acreSecond = sliced[i + 1].toString(16).padStart(2, "0").toUpperCase();
+          acreHex[acreHexIdx] = `0x${acreFirst}${acreSecond}`;
+          acreHexIdx += 1;
+        }
+
+        console.log(acreHex);
+
+        return;
       }
     </script>
   </body>
