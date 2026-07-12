@@ -96,8 +96,7 @@ function getAcreHex(array, startHex, endHex) {
       acreHexIdx++;
     }
   }
-  console.log(table);
-  map.appendChild(table);
 
+  map.appendChild(table);
   return;
 }
