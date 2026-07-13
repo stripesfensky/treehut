@@ -4,6 +4,7 @@ html {
   font-family: "Tahoma", "Arial", sans-serif;
   font-size: 12px;
   min-height: 100%;
+  width: 100%;
 }
 
 input, input::file-selector-button {
@@ -26,7 +27,8 @@ body {
   min-height: calc(100% - 100px);
   margin: 50px auto;
   padding: 50px;
-  width: 590px;
+  max-width: 590px;
+  width: 100%;
   box-sizing: border-box;
 }
 
@@ -55,18 +57,4 @@ ul, ol {
 
 #map {
   flex: 1 0 auto;
-}
-
-#map table {
-  border-collapse: collapse;
-}
-
-#map td {
-  border: 1px solid black;
-}
-
-#map td {
-  width: 70px;
-  height: 70px;
-  text-align: center;
 }
