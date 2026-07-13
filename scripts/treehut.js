@@ -1,4 +1,4 @@
-const fileError = document.getElementById("fileError");
+const msg = document.getElementById("msg");
 const gci = document.getElementById("gci");
 const hex = document.getElementById("hex");
 const map = document.getElementById("map");
@@ -41,10 +41,10 @@ gci.addEventListener("change", (event) => {
     }
         
     if (gafTest == false || muraTest == false) {
-      setFileError("This file is invalid.", "red");
+      setMessage("This file is invalid.", "red");
     }
     else {
-      setFileError("This file is valid. (" + acStr + " / " + gafStr + ", " + muraStr + ")", "green");
+      setMessage("This file is valid. (" + acStr + " / " + gafStr + ", " + muraStr + ")", "green");
       if (gafStr == "GAEJ01") {
         getAcreHex(fileArray, "0002C100", "0002C18B");
       } 
@@ -62,9 +62,9 @@ gci.addEventListener("change", (event) => {
   return;
 });
 
-function setFileError(message, color) {
-    fileError.innerText = message;
-    fileError.style.color = color;  
+function setMessage(message, color) {
+    msg.innerText = message;
+    msg.style.color = color;  
     return;
 }
 
@@ -92,7 +92,7 @@ function getAcreHex(array, startHex, endHex) {
   const sliced = getSlicedArray(array, startHex, endHex);
   
   if (sliced.length / 2 != 70) {
-    setFileError("The acre data for this save file is invalid.", "red");
+    setMessage("The acre data for this save file is invalid.", "red");
     return;
   }
 
