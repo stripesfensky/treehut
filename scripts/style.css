@@ -9,6 +9,7 @@ html {
 
 input, input::file-selector-button {
   font-size: 12px;
+  max-width: 100%;
 }
 
 a {
@@ -57,4 +58,27 @@ ul, ol {
 
 #map {
   flex: 1 0 auto;
+}
+
+#mapgrid {
+  background-color: black;
+  border: 1px solid black;
+  display: grid;
+  gap: 1px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  max-width: 100%;
+}
+
+.acre {
+  align-items: center;
+  aspect-ratio: 1 / 1;
+  background-color: white;
+  display: flex;
+  font-size: clamp(6px, 4px + 1.3333vw, 12px);
+  justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: nowrap;
+  width: 100%;
 }
