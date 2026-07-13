@@ -21,9 +21,9 @@ gci.addEventListener("change", (event) => {
     let acStr = "Animal Crossing (USA)";
 
     let gafStr = getHexString(fileArray, "00000000", "00000005");
-    let gafTest = RegExp("GA\[A-Z]\[A-Z]01").test(gafStr);
+    let gafTest = RegExp("GA\[E,F]\[E,J,P,U]01").test(gafStr);
     let muraStr = getHexString(fileArray, "00000008", "0000001A");
-    let muraTest = RegExp("Dobutsunomori\[A-Z]_MURA").test(muraStr);
+    let muraTest = RegExp("Dobutsunomori\[P,E]_MURA").test(muraStr);
 
     switch(gafStr) {
       case "GAFJ01":
@@ -106,22 +106,17 @@ function getAcreHex(array, startHex, endHex) {
     acreHexIdx += 1;
   }
 
-  console.log(acreHex);
-
-  acreHexIdx = 0;
-
   let mapGrid = document.createElement("div");
-  mapGrid.id = "mapGrid"
 
   for (let i = 0; i < acreHex.length; i++) {
     let acre = document.createElement("div");
     acre.className = "acre";
-    acre.innerText = acreHex[acreHexIdx];
+    acre.innerText = acreHex[i];
     mapGrid.append(acre);
-    acreHexIdx++;
   }
 
-  map.innerHTML = "<h2>Map</h2>"
+  mapGrid.id = "mapgrid";
+  map.innerHTML = "<h2>Map</h2>";
   map.appendChild(mapGrid);
   return;
 }
