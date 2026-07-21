@@ -153,13 +153,13 @@ function showDebugInfo(fileArray, gafStr) {
       debug.innerHTML += "<p>Debug information is only available for GAFE01.</p>";
     } 
     else {
-      let gameCode = getHex(fileArray, "00000000", "00000003");
+      let gameCode = getHexString(fileArray, "00000000", "00000003");
       console.log(gameCode);
-      let makerCode = getHex(fileArray, "00000004", "00000005");
+      let makerCode = getHexString(fileArray, "00000004", "00000005");
       console.log(makerCode);
       let imageKey = getHex(fileArray, "00000007", "00000007");
       console.log(imageKey);
-      let fileName = getHex(fileArray, "00000008", "00000027");
+      let fileName = getHexString(fileArray, "00000008", "00000027");
       console.log(fileName);
       let lastModified = getHex(fileArray, "00000029", "0000002B");
       console.log(lastModified);
