@@ -1,7 +1,9 @@
 const msg = document.getElementById("msg");
 const gci = document.getElementById("gci");
+const gciparser = document.getElementById("gciparser");
 const hex = document.getElementById("hex");
 const map = document.getElementById("map");
+const debug = document.getElementById("debug");
 const uploadForm = document.getElementById("upload").reset();
 let uploads;
 let uploadedFile;
@@ -45,6 +47,7 @@ gci.addEventListener("change", (event) => {
     }
     else {
       setMessage("This file is valid. (" + acStr + " / " + gafStr + ", " + muraStr + ")", "green");
+
       if (gafStr == "GAEJ01") {
         getAcreHex(fileArray, "0002C100", "0002C18B");
       } 
@@ -54,6 +57,14 @@ gci.addEventListener("change", (event) => {
       else {
         getAcreHex(fileArray, "0003D3E8", "0003D473");
       }
+
+      if (gciparser.checked) {
+        showDebugInfo(fileArray, gafStr);
+      }
+
+      gciparser.addEventListener("change", (event) => {
+        showDebugInfo(fileArray, gafStr);
+      });
     }
 
     return;
@@ -75,13 +86,24 @@ function getSlicedArray(array, startHex, endHex) {
   return sliced;
 }
 
-function getHexString(array, startHex, endHex) {
+function getHex(array, startHex, endHex) {
   const sliced = getSlicedArray(array, startHex, endHex);
-  let valueStr = "";
+  let hexArray = new Array();
 
   for (let i = 0; i < sliced.length; i++) {
-    const intChar = parseInt(sliced[i].toString(16), 16);
-    const strChar = String.fromCharCode(intChar);
+    const hex = sliced[i].toString(16).padStart(2, "0").toUpperCase();
+    hexArray.push(hex);
+  }
+
+  return hexArray;
+}
+
+function getHexString(array, startHex, endHex) {
+  const hex = getHex(array, startHex, endHex);
+  let valueStr = "";
+
+  for (let i = 0; i < hex.length; i++) {
+    const strChar = String.fromCharCode(parseInt(hex[i], 16));
     valueStr += strChar;
   }
   
@@ -89,9 +111,9 @@ function getHexString(array, startHex, endHex) {
 }
 
 function getAcreHex(array, startHex, endHex) {
-  const sliced = getSlicedArray(array, startHex, endHex);
+  const hex = getHex(array, startHex, endHex);
   
-  if (sliced.length / 2 != 70) {
+  if (hex.length / 2 != 70) {
     setMessage("The acre data for this save file is invalid.", "red");
     return;
   }
@@ -99,9 +121,9 @@ function getAcreHex(array, startHex, endHex) {
   let acreHex = new Array(70);
   let acreHexIdx = 0;
 
-  for (let i = 0; i < sliced.length; i += 2) {
-    const acreFirst = sliced[i].toString(16).padStart(2, "0").toUpperCase();
-    const acreSecond = sliced[i + 1].toString(16).padStart(2, "0").toUpperCase();
+  for (let i = 0; i < hex.length; i += 2) {
+    const acreFirst = hex[i].toString(16).padStart(2, "0").toUpperCase();
+    const acreSecond = hex[i + 1].toString(16).padStart(2, "0").toUpperCase();
     acreHex[acreHexIdx] = "0x" + acreFirst + acreSecond;
     acreHexIdx += 1;
   }
@@ -118,5 +140,47 @@ function getAcreHex(array, startHex, endHex) {
   mapGrid.id = "mapgrid";
   map.innerHTML = "<h2>Map</h2>";
   map.appendChild(mapGrid);
+  return;
+}
+
+function showDebugInfo(fileArray, gafStr) {
+  debug.innerHTML = "";
+
+  if (gciparser.checked) {
+    debug.innerHTML = "<h2>Debug Information</h2>";
+    
+    if (gafStr != "GAFE01") {
+      debug.innerHTML += "<p>Debug information is only available for GAFE01.</p>";
+    } 
+    else {
+      let gameCode = getHex(fileArray, "00000000", "00000003");
+      console.log(gameCode);
+      let makerCode = getHex(fileArray, "00000004", "00000005");
+      console.log(makerCode);
+      let imageKey = getHex(fileArray, "00000007", "00000007");
+      console.log(imageKey);
+      let fileName = getHex(fileArray, "00000008", "00000027");
+      console.log(fileName);
+      let lastModified = getHex(fileArray, "00000029", "0000002B");
+      console.log(lastModified);
+      let imageOffset = getHex(fileArray, "0000002C", "0000002F");
+      console.log(imageOffset);
+      let iconGFXFormat = getHex(fileArray, "00000030", "00000031");
+      console.log(iconGFXFormat);
+      let animationSpeed = getHex(fileArray, "00000032", "00000033");
+      console.log(animationSpeed);
+      let filePermissions = getHex(fileArray, "00000034", "00000034");
+      console.log(filePermissions);
+      let copyCounter = getHex(fileArray, "00000035", "00000035");
+      console.log(copyCounter);
+      let firstBlockNo = getHex(fileArray, "00000036", "00000037");
+      console.log(firstBlockNo);
+      let blockLength = getHex(fileArray, "00000038", "00000039");
+      console.log(blockLength);
+      let comment = getHex(fileArray, "0000003C", "0000003F");
+      console.log(comment);
+    }
+  }
+
   return;
 }
