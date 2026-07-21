@@ -153,6 +153,8 @@ function showDebugInfo(fileArray, gafStr) {
       debug.innerHTML += "<p>Debug information is only available for GAFE01.</p>";
     } 
     else {
+      debug.innerHTML += "<p>Debug information is being printed to the console.</p>";
+
       let gameCode = getHexString(fileArray, "00000000", "00000003");
       console.log(gameCode);
       let makerCode = getHexString(fileArray, "00000004", "00000005");
