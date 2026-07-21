@@ -48,10 +48,19 @@ ul, ol {
   padding-left: 0;
 }
 
+#upload {
+  padding-bottom: 10px;
+}
+
 #gci {
   display: block;
   padding: 15px 0;
 }
+
+#gciparser {
+  margin: -2px 2px 0px 0px;
+  vertical-align: middle;
+} 
 
 #main {
   flex: 1;
@@ -65,7 +74,6 @@ ul, ol {
   background-color: black;
   border: 1px solid black;
   display: grid;
-  gap: 1px;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   max-width: 100%;
 }
@@ -78,6 +86,7 @@ ul, ol {
   font-size: clamp(6px, 4px + 1.3333vw, 12px);
   justify-content: center;
   min-width: 0;
+  outline: 1px solid black;
   overflow: hidden;
   text-overflow: clip;
   white-space: nowrap;
