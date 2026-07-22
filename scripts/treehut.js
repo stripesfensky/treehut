@@ -8,6 +8,27 @@ const uploadForm = document.getElementById("upload").reset();
 let uploads;
 let uploadedFile;
 
+async function getDecompSource() {
+  const url = "https://raw.githubusercontent.com/ACreTeam/ac-decomp/refs/heads/master/src/data/field/bg/acre/bg_data.c";
+  try {
+    const response = await fetch(url);
+
+    if (response.ok == false) {
+      throw new Error("Response status: " + response.status);
+    }
+
+    const result = await response.text();
+    return result;
+  }
+  catch (error) {
+    console.error(error.message);
+  }
+
+  return;
+}
+
+const bgdata = await getDecompSource();
+
 gci.addEventListener("change", (event) => {
   const reader = new FileReader();
   map.innerHTML = "";
@@ -58,13 +79,13 @@ gci.addEventListener("change", (event) => {
         getAcreHex(fileArray, "0003D3E8", "0003D473");
       }
 
-      if (gciparser.checked) {
+      /* if (gciparser.checked == true) {
         showDebugInfo(fileArray, gafStr);
       }
 
       gciparser.addEventListener("change", (event) => {
         showDebugInfo(fileArray, gafStr);
-      });
+      }); */
     }
 
     return;
@@ -143,7 +164,7 @@ function getAcreHex(array, startHex, endHex) {
   return;
 }
 
-function showDebugInfo(fileArray, gafStr) {
+/* function showDebugInfo(fileArray, gafStr) {
   debug.innerHTML = "";
 
   if (gciparser.checked) {
@@ -185,4 +206,4 @@ function showDebugInfo(fileArray, gafStr) {
   }
 
   return;
-}
+} */
