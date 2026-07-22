@@ -153,8 +153,13 @@ function getAcreHex(array, startHex, endHex) {
 
   for (let i = 0; i < acreHex.length; i++) {
     let acre = document.createElement("div");
+    
+    let acreHexElevation = acreHex[i];
+    let acreHexBase = "0x" + (acreHex[i] & ~0x03).toString(16).padStart(4, "0").toUpperCase();
+
     acre.className = "acre";
-    acre.innerText = acreHex[i];
+    acre.innerText = acreHexElevation;
+    acre.innerText += "\n" + acreHexBase;
     mapGrid.append(acre);
   }
 
