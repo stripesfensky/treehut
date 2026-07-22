@@ -1,9 +1,7 @@
 const msg = document.getElementById("msg");
 const gci = document.getElementById("gci");
-const gciparser = document.getElementById("gciparser");
 const hex = document.getElementById("hex");
 const map = document.getElementById("map");
-const debug = document.getElementById("debug");
 const uploadForm = document.getElementById("upload").reset();
 let uploads;
 let uploadedFile;
@@ -78,14 +76,6 @@ gci.addEventListener("change", (event) => {
       else {
         getAcreHex(fileArray, "0003D3E8", "0003D473");
       }
-
-      /* if (gciparser.checked == true) {
-        showDebugInfo(fileArray, gafStr);
-      }
-
-      gciparser.addEventListener("change", (event) => {
-        showDebugInfo(fileArray, gafStr);
-      }); */
     }
 
     return;
@@ -153,7 +143,7 @@ function getAcreHex(array, startHex, endHex) {
 
   for (let i = 0; i < acreHex.length; i++) {
     let acre = document.createElement("div");
-    
+
     let acreHexElevation = acreHex[i];
     let acreHexBase = "0x" + (acreHex[i] & ~0x03).toString(16).padStart(4, "0").toUpperCase();
 
@@ -168,47 +158,3 @@ function getAcreHex(array, startHex, endHex) {
   map.appendChild(mapGrid);
   return;
 }
-
-/* function showDebugInfo(fileArray, gafStr) {
-  debug.innerHTML = "";
-
-  if (gciparser.checked) {
-    debug.innerHTML = "<h2>Debug Information</h2>";
-    
-    if (gafStr != "GAFE01") {
-      debug.innerHTML += "<p>Debug information is only available for GAFE01.</p>";
-    } 
-    else {
-      debug.innerHTML += "<p>Debug information is being printed to the console.</p>";
-
-      let gameCode = getHexString(fileArray, "00000000", "00000003");
-      console.log(gameCode);
-      let makerCode = getHexString(fileArray, "00000004", "00000005");
-      console.log(makerCode);
-      let imageKey = getHex(fileArray, "00000007", "00000007");
-      console.log(imageKey);
-      let fileName = getHexString(fileArray, "00000008", "00000027");
-      console.log(fileName);
-      let lastModified = getHex(fileArray, "00000029", "0000002B");
-      console.log(lastModified);
-      let imageOffset = getHex(fileArray, "0000002C", "0000002F");
-      console.log(imageOffset);
-      let iconGFXFormat = getHex(fileArray, "00000030", "00000031");
-      console.log(iconGFXFormat);
-      let animationSpeed = getHex(fileArray, "00000032", "00000033");
-      console.log(animationSpeed);
-      let filePermissions = getHex(fileArray, "00000034", "00000034");
-      console.log(filePermissions);
-      let copyCounter = getHex(fileArray, "00000035", "00000035");
-      console.log(copyCounter);
-      let firstBlockNo = getHex(fileArray, "00000036", "00000037");
-      console.log(firstBlockNo);
-      let blockLength = getHex(fileArray, "00000038", "00000039");
-      console.log(blockLength);
-      let comment = getHex(fileArray, "0000003C", "0000003F");
-      console.log(comment);
-    }
-  }
-
-  return;
-} */
