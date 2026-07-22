@@ -6,7 +6,7 @@
     <title>Animal Crossing Map Viewer</title>
     <link rel="icon" type="image/png" href="assets/tree.png">
     <link rel="stylesheet" type="text/css" href="scripts/style.css">
-    <script src="scripts/treehut.js" defer></script>
+    <script type="module" src="scripts/treehut.js"></script>
   </head>
   <body>
     <div id="main">
@@ -16,8 +16,8 @@
           Your file is never uploaded to a server; contents are only stored in your browser's memory.
         </span>
         <input type="file" id="gci" name="gci" accept=".gci">
-        <input type="checkbox" id="gciparser" name="gciparser">
-        <label for="gciparser">Print debug information (GAFE01)?</label> 
+        <!--<input type="checkbox" id="gciparser" name="gciparser">
+        <label for="gciparser">Print debug information (GAFE01)?</label>-->
       </form>
       <span id="msg"></span><br />
     </div>
