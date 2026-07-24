@@ -59,8 +59,11 @@ ul, ol {
 }
 
 #asyncfail {
-  color: red;
   display: none;
+}
+
+#asyncfail h3 {
+  color: red;
 }
 
 #asynctrace {
