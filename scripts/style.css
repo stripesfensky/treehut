@@ -48,7 +48,27 @@ ul, ol {
   padding-left: 0;
 }
 
+#asyncwait, #asyncfail, #asynctrace, #upload {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+#asyncwait {
+  display: block;
+  opacity: 0;
+}
+
+#asyncfail {
+  color: red;
+  display: none;
+}
+
+#asynctrace {
+  display: none;
+}
+
 #upload {
+  display: none;
   padding-bottom: 10px;
 }
 
