@@ -6,7 +6,7 @@
     <title>Animal Crossing Map Viewer</title>
     <link rel="icon" type="image/png" href="assets/tree.png">
     <link rel="stylesheet" type="text/css" href="scripts/style.css">
-    <script type="module" src="scripts/treehut.js"></script>
+    <script src="scripts/treehut.js" defer></script>
   </head>
   <body>
     <div id="main">
@@ -14,13 +14,16 @@
       <h3 id="asyncwait">
         Loading decomp source files from GitHub...
       </h3>
-      <h3 id="asyncfail">
-        Sorry, the decomp source files are unreachable.<br />
-        Please try again later.
-      </h3>
+      <span id="asyncfail">
+        <h2>Loading Error</h2>
+        <h3>
+          Sorry, the decomp source files are unreachable.<br />
+          Please try again later.
+        </h3>
+      </span>
       <p id="asynctrace"></p>
       <form id="upload">
-        <h3>Upload Save</h3>
+        <h2>Upload Save</h2>
         <span>Upload your <u>Animal Crossing</u> or <u>Dōbutsu no Mori(+/e+)</u> save file in the .GCI format.<br />
           Your file is never uploaded to a server; contents are only stored in your browser's memory.
         </span>
