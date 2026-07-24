@@ -11,7 +11,16 @@
   <body>
     <div id="main">
       <h1>Animal Crossing Map Viewer</h1>
+      <h3 id="asyncwait">
+        Loading decomp source files from GitHub...
+      </h3>
+      <h3 id="asyncfail">
+        Sorry, the decomp source files are unreachable.<br />
+        Please try again later.
+      </h3>
+      <p id="asynctrace"></p>
       <form id="upload">
+        <h3>Upload Save</h3>
         <span>Upload your <u>Animal Crossing</u> or <u>Dōbutsu no Mori(+/e+)</u> save file in the .GCI format.<br />
           Your file is never uploaded to a server; contents are only stored in your browser's memory.
         </span>
@@ -28,7 +37,7 @@
           <a href="https://github.com/ACreTeam/ac-decomp">ACreTeam</a> for decompilation work to understand the acre data format.
         </li>
         <li>
-          <a href="https://github.com/Cuyler36/ACSE">Cuyler36</a> for ACSE and its available source code to decipher the save data format.
+          <a href="https://github.com/Cuyler36/ACSE">Cuyler36</a> for ACSE and its open source code to better understand the save data format.
         </li>
         <li>
           <a href="https://www.deviantart.com/thenewhylton/art/Animal-Crossing-Grass-Remake-Spring-HD-439882381">thenewhylton</a>
