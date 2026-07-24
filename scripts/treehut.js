@@ -2,30 +2,90 @@ const msg = document.getElementById("msg");
 const gci = document.getElementById("gci");
 const hex = document.getElementById("hex");
 const map = document.getElementById("map");
-const uploadForm = document.getElementById("upload").reset();
+const asyncWait = document.getElementById("asyncwait");
+const asyncFail = document.getElementById("asyncfail");
+const asyncTrace = document.getElementById("asynctrace");
+const uploadForm = document.getElementById("upload");
+
+const bgdataURL = "https://raw.githubusercontent.com/ACreTeam/ac-decomp/refs/heads/master/src/data/field/bg/acre/bg_data.c";
+const combitypeURL = "https://raw.githubusercontent.com/ACreTeam/ac-decomp/refs/heads/master/include/m_combi_type.h";
+
+let bgdata;
+let combitype;
 let uploads;
 let uploadedFile;
 
-async function getDecompSource() {
-  const url = "https://raw.githubusercontent.com/ACreTeam/ac-decomp/refs/heads/master/src/data/field/bg/acre/bg_data.c";
-  try {
-    const response = await fetch(url);
+async function getDecompSource(url) {
+  console.log("Loading from URL \"" + url + "\"");
+  const response = await fetch(url);
 
-    if (response.ok == false) {
-      throw new Error("Response status: " + response.status);
+  if (response.ok == false) {
+    let error = "Tried to fetch from URL \"" + url + "\" but response returned with status " + response.status;
+    
+    if (response.statusText.length > 0) {
+      error += " (" + response.statusText + ").";
+    }
+    else {
+      error += ".";
     }
 
-    const result = await response.text();
-    return result;
+    throw new Error(error);
   }
-  catch (error) {
-    console.error(error.message);
-  }
+  
+  const result = await response.text();
+  console.log("Loading was successful for URL\"" + url + "\"");
 
-  return;
+  return result;
 }
 
-const bgdata = await getDecompSource();
+async function treehut() {
+  try {
+    const decomp = await Promise.allSettled([getDecompSource(bgdataURL), getDecompSource(combitypeURL)]);
+    const decompFailures = decomp.filter(r => r.status == "rejected");
+
+    if (decompFailures.length > 0) {
+      const errors = decompFailures.map(f => f.reason.message).join("<br /><br />");
+      throw new Error(errors);
+    }
+
+    bgdata = decomp[0].value;
+    combitype = decomp[1].value;
+
+    asyncWait.style.opacity = 0;
+
+    setTimeout(() => {
+      asyncWait.style.display = "none";
+      uploadForm.reset();
+      uploadForm.style.display = "block";
+
+      setTimeout(() => {
+        uploadForm.style.opacity = 1;
+      }, 50);
+    }, 500);
+  }
+  catch (error) {
+    asyncWait.style.opacity = 0;
+
+    setTimeout(() => {
+      asyncWait.style.display = "none";
+      asyncFail.style.display = "block";
+      asyncTrace.style.display = "block";
+      asyncTrace.innerHTML = error.message;
+
+      setTimeout(() => {
+        asyncFail.style.opacity = 1;
+        asyncTrace.style.opacity = 1;
+      }, 50);
+    }, 500);
+  }
+}
+
+setTimeout(() => {
+  asyncWait.style.opacity = 1;
+  setTimeout(() => {
+    treehut();
+  }, 1500);
+}, 500);
 
 gci.addEventListener("change", (event) => {
   const reader = new FileReader();
@@ -145,11 +205,11 @@ function getAcreHex(array, startHex, endHex) {
     let acre = document.createElement("div");
 
     let acreHexElevation = acreHex[i];
-    let acreHexBase = "0x" + (acreHex[i] & ~0x03).toString(16).padStart(4, "0").toUpperCase();
+    let acreHexBase = "0x" + (acreHexElevation & ~0x0003).toString(16).padStart(4, "0").toUpperCase();
+    let arrayIndex = (acreHexBase >> 2);
 
     acre.className = "acre";
-    acre.innerText = acreHexElevation;
-    acre.innerText += "\n" + acreHexBase;
+    acre.innerText = acreHexElevation + "\n" + acreHexBase + "\n" + arrayIndex;
     mapGrid.append(acre);
   }
 
