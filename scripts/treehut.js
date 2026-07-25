@@ -50,31 +50,21 @@ async function treehut() {
     bgdata = decomp[0].value;
     combitype = decomp[1].value;
 
-    asyncWait.style.opacity = 0;
+    asyncWait.classList.add("asyncinvisible");
 
     setTimeout(() => {
-      asyncWait.style.display = "none";
+      asyncWait.classList.remove("asyncvisible", "asyncinvisible");
       uploadForm.reset();
-      uploadForm.style.display = "block";
-
-      setTimeout(() => {
-        uploadForm.style.opacity = 1;
-      }, 50);
+      uploadForm.classList.add("asyncvisible");
     }, 500);
   }
   catch (error) {
-    asyncWait.style.opacity = 0;
+    asyncWait.classList.add("asyncinvisible");
 
     setTimeout(() => {
-      asyncWait.style.display = "none";
-      asyncFail.style.display = "block";
-      asyncTrace.style.display = "block";
+      asyncWait.classList.remove("asyncvisible", "asyncinvisible");
       asyncTrace.innerHTML = error.message;
-
-      setTimeout(() => {
-        asyncFail.style.opacity = 1;
-        asyncTrace.style.opacity = 1;
-      }, 50);
+      asyncFail.classList.add("asyncvisible");
     }, 500);
   }
 }
@@ -90,19 +80,18 @@ window.addEventListener("load", () => {
   uploadForm = document.getElementById("upload");
 
   gci.addEventListener("change", (event) => {
-    gciLoad();
+    gciLoad(event);
   });
 
   setTimeout(() => {
-    asyncWait.style.opacity = 1;
-
+    asyncWait.classList.add("asyncvisible");
     setTimeout(() => {
       treehut();
-    }, 1500);
-  }, 500);
+    }, 1000);
+  }, 250);
 });
 
-function gciLoad() {
+function gciLoad(event) {
   const reader = new FileReader();
   map.innerHTML = "";
   uploads = event.target.files;
@@ -110,8 +99,8 @@ function gciLoad() {
 
   reader.readAsArrayBuffer(uploadedFile);
 
-  reader.addEventListener("load", (event) => {
-    const fileBuffer = event.target.result;
+  reader.addEventListener("load", (loadEvent) => {
+    const fileBuffer = loadEvent.target.result;
     const fileArray = new Uint8Array(fileBuffer);
 
     let acStr = "Animal Crossing (USA)";
