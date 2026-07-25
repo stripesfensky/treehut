@@ -111,6 +111,11 @@ ul, ol {
   overflow: hidden;
   text-align: center;
   text-overflow: clip;
+  transition: 0.5s;
   white-space: nowrap;
   width: 100%;
+}
+
+.acre:hover {
+  background-color: lemonchiffon;
 }
