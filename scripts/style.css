@@ -48,35 +48,38 @@ ul, ol {
   padding-left: 0;
 }
 
-#asyncwait, #asyncfail, #asynctrace, #upload {
+#asyncwait, #asyncfail, #upload {
+  display: none;
   opacity: 0;
   transition: opacity 0.5s ease-in-out;
 }
 
-#asyncwait {
+#asyncwait.asyncvisible,
+#asyncfail.asyncvisible,
+#upload.asyncvisible {
   display: block;
-  opacity: 0;
+  opacity: 1;
+
+  @starting-style {
+    opacity: 0;
+  }
 }
 
-#asyncfail {
-  display: none;
+#asyncwait.asyncinvisible,
+#asyncfail.asyncinvisible,
+#upload.asyncinvisible {
+  opacity: 0 !important;
 }
 
 #asyncfail h3 {
   color: red;
 }
 
-#asynctrace {
-  display: none;
-}
-
 #upload {
-  display: none;
   padding-bottom: 10px;
 }
 
 #gci {
-  display: block;
   padding: 15px 0;
 }
 
