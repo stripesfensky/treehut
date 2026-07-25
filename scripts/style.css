@@ -1,5 +1,5 @@
 html {
-  background: url("../assets/grass.jpg") top left / 100px repeat;
+  background: #2B8F51 url("../assets/grass.jpg") top left / 100px repeat;
   display: flex;
   font-family: "Tahoma", "Arial", sans-serif;
   font-size: 12px;
