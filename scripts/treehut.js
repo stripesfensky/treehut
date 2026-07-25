@@ -1,19 +1,18 @@
-const msg = document.getElementById("msg");
-const gci = document.getElementById("gci");
-const hex = document.getElementById("hex");
-const map = document.getElementById("map");
-const asyncWait = document.getElementById("asyncwait");
-const asyncFail = document.getElementById("asyncfail");
-const asyncTrace = document.getElementById("asynctrace");
-const uploadForm = document.getElementById("upload");
-
 const bgdataURL = "https://raw.githubusercontent.com/ACreTeam/ac-decomp/refs/heads/master/src/data/field/bg/acre/bg_data.c";
 const combitypeURL = "https://raw.githubusercontent.com/ACreTeam/ac-decomp/refs/heads/master/include/m_combi_type.h";
 
+let asyncFail;
+let asyncTrace;
+let asyncWait;
 let bgdata;
 let combitype;
-let uploads;
+let gci;
+let hex;
+let map;
+let msg;
 let uploadedFile;
+let uploadForm;
+let uploads;
 
 async function getDecompSource(url) {
   console.log("Loading from URL \"" + url + "\"");
@@ -82,80 +81,86 @@ async function treehut() {
 
 window.addEventListener("load", () => {
   setTimeout(() => {
+    msg = document.getElementById("msg");
+    gci = document.getElementById("gci");
+    hex = document.getElementById("hex");
+    map = document.getElementById("map");
+    asyncWait = document.getElementById("asyncwait");
+    asyncFail = document.getElementById("asyncfail");
+    asyncTrace = document.getElementById("asynctrace");
+    uploadForm = document.getElementById("upload");
+
     asyncWait.style.opacity = 1;
+
     setTimeout(() => {
       treehut();
     }, 1500);
   }, 500);
-});
 
-gci.addEventListener("change", (event) => {
-  const reader = new FileReader();
-  map.innerHTML = "";
-  uploads = event.target.files;
-  uploadedFile = uploads[0]
+  gci.addEventListener("change", (event) => {
+    const reader = new FileReader();
+    map.innerHTML = "";
+    uploads = event.target.files;
+    uploadedFile = uploads[0]
 
-  reader.readAsArrayBuffer(uploadedFile);
+    reader.readAsArrayBuffer(uploadedFile);
 
-  reader.addEventListener("load", (event) => {
-    const fileBuffer = event.target.result;
-    const fileArray = new Uint8Array(fileBuffer);
+    reader.addEventListener("load", (event) => {
+      const fileBuffer = event.target.result;
+      const fileArray = new Uint8Array(fileBuffer);
 
-    let acStr = "Animal Crossing (USA)";
+      let acStr = "Animal Crossing (USA)";
 
-    let gafStr = getHexString(fileArray, "00000000", "00000005");
-    let gafTest = RegExp("GA\[E,F]\[E,J,P,U]01").test(gafStr);
-    let muraStr = getHexString(fileArray, "00000008", "0000001A");
-    let muraTest = RegExp("Dobutsunomori\[P,E]_MURA").test(muraStr);
+      let gafStr = getHexString(fileArray, "00000000", "00000005");
+      let gafTest = RegExp("GA\[E,F]\[E,J,P,U]01").test(gafStr);
+      let muraStr = getHexString(fileArray, "00000008", "0000001A");
+      let muraTest = RegExp("Dobutsunomori\[P,E]_MURA").test(muraStr);
 
-    switch(gafStr) {
-      case "GAFJ01":
-        acStr = "Dōbutsu no Mori+";
-        break;
-      case "GAEJ01":
-        acStr = "Dōbutsu no Mori e+";
-        break;
-      case "GAFP01":
-        acStr = "Animal Crossing (EUR)";
-        break;
-      case "GAFU01":
-        acStr = "Animal Crossing (AUS)";
-        break;
-    }
-        
-    if (gafTest == false || muraTest == false) {
-      setMessage("This file is invalid.", "red");
-    }
-    else {
-      setMessage("This file is valid. (" + acStr + " / " + gafStr + ", " + muraStr + ")", "green");
-
-      if (gafStr == "GAEJ01") {
-        getAcreHex(fileArray, "0002C100", "0002C18B");
-      } 
-      else if (gafStr == "GAFJ01") {
-        getAcreHex(fileArray, "00015F28", "00015FB3");
-      } 
-      else {
-        getAcreHex(fileArray, "0003D3E8", "0003D473");
+      switch(gafStr) {
+        case "GAFJ01":
+          acStr = "Dōbutsu no Mori+";
+          break;
+        case "GAEJ01":
+          acStr = "Dōbutsu no Mori e+";
+          break;
+        case "GAFP01":
+          acStr = "Animal Crossing (EUR)";
+          break;
+        case "GAFU01":
+          acStr = "Animal Crossing (AUS)";
+          break;
       }
-    }
+          
+      if (gafTest == false || muraTest == false) {
+        setMessage("This file is invalid.", "red");
+      }
+      else {
+        setMessage("This file is valid. (" + acStr + " / " + gafStr + ", " + muraStr + ")", "green");
 
-    return;
+        if (gafStr == "GAEJ01") {
+          getAcreHex(fileArray, "0002C100", "0002C18B");
+        } 
+        else if (gafStr == "GAFJ01") {
+          getAcreHex(fileArray, "00015F28", "00015FB3");
+        } 
+        else {
+          getAcreHex(fileArray, "0003D3E8", "0003D473");
+        }
+      }
+    });
   });
-
-  return;
 });
 
 function setMessage(message, color) {
-    msg.innerText = message;
-    msg.style.color = color;  
-    return;
+  msg.innerText = message;
+  msg.style.color = color;
 }
 
 function getSlicedArray(array, startHex, endHex) {
   const start = parseInt(startHex, 16);
   const end = parseInt(endHex, 16);
   const sliced = array.slice(start, end + 1);
+
   return sliced;
 }
 
@@ -188,7 +193,6 @@ function getAcreHex(array, startHex, endHex) {
   
   if (hex.length / 2 != 70) {
     setMessage("The acre data for this save file is invalid.", "red");
-    return;
   }
 
   let acreHex = new Array(70);
@@ -218,5 +222,4 @@ function getAcreHex(array, startHex, endHex) {
   mapGrid.id = "mapgrid";
   map.innerHTML = "<h2>Map</h2>";
   map.appendChild(mapGrid);
-  return;
 }
