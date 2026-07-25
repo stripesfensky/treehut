@@ -79,6 +79,25 @@ window.addEventListener("load", () => {
   asyncTrace = document.getElementById("asynctrace");
   uploadForm = document.getElementById("upload");
 
+  map.addEventListener("contextmenu", (mapEvent) => {
+    const acre = mapEvent.target.closest(".acre");
+
+    if (acre != null) {
+      mapEvent.preventDefault();
+      const acreTitle = acre.getAttribute("title");
+
+      if (acreTitle != null) {
+        navigator.clipboard.writeText(acreTitle);
+        console.log("Copied to clipboard: " + acreTitle);
+        acre.classList.add("selected");
+
+        setTimeout(() => {
+          acre.classList.remove("selected");
+        }, 250);
+      }
+    }
+  });
+
   gci.addEventListener("change", (event) => {
     gciLoad(event);
   });
@@ -216,8 +235,9 @@ function getAcreHex(array, startHex, endHex) {
     let ctName = ctItems[arrayIndex];
 
     acre.className = "acre";
-    acre.innerText = acreHexElevation + "\n" + acreHexBase + "\n" + arrayIndex;
-    acre.title = ctName;
+    acre.title = ctName.replace("BLOCK_COMBI", "BG_TYPE");
+    acre.style.backgroundImage = "url(\"acres\/" + acre.title + ".png\")";
+    acre.style.backgroundSize = "contain";
     mapGrid.append(acre);
   }
 
