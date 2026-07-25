@@ -80,76 +80,80 @@ async function treehut() {
 }
 
 window.addEventListener("load", () => {
-  setTimeout(() => {
-    msg = document.getElementById("msg");
-    gci = document.getElementById("gci");
-    hex = document.getElementById("hex");
-    map = document.getElementById("map");
-    asyncWait = document.getElementById("asyncwait");
-    asyncFail = document.getElementById("asyncfail");
-    asyncTrace = document.getElementById("asynctrace");
-    uploadForm = document.getElementById("upload");
+  msg = document.getElementById("msg");
+  gci = document.getElementById("gci");
+  hex = document.getElementById("hex");
+  map = document.getElementById("map");
+  asyncWait = document.getElementById("asyncwait");
+  asyncFail = document.getElementById("asyncfail");
+  asyncTrace = document.getElementById("asynctrace");
+  uploadForm = document.getElementById("upload");
 
+  gci.addEventListener("change", (event) => {
+    gciLoad();
+  });
+
+  setTimeout(() => {
     asyncWait.style.opacity = 1;
 
     setTimeout(() => {
       treehut();
     }, 1500);
   }, 500);
-
-  gci.addEventListener("change", (event) => {
-    const reader = new FileReader();
-    map.innerHTML = "";
-    uploads = event.target.files;
-    uploadedFile = uploads[0]
-
-    reader.readAsArrayBuffer(uploadedFile);
-
-    reader.addEventListener("load", (event) => {
-      const fileBuffer = event.target.result;
-      const fileArray = new Uint8Array(fileBuffer);
-
-      let acStr = "Animal Crossing (USA)";
-
-      let gafStr = getHexString(fileArray, "00000000", "00000005");
-      let gafTest = RegExp("GA\[E,F]\[E,J,P,U]01").test(gafStr);
-      let muraStr = getHexString(fileArray, "00000008", "0000001A");
-      let muraTest = RegExp("Dobutsunomori\[P,E]_MURA").test(muraStr);
-
-      switch(gafStr) {
-        case "GAFJ01":
-          acStr = "Dōbutsu no Mori+";
-          break;
-        case "GAEJ01":
-          acStr = "Dōbutsu no Mori e+";
-          break;
-        case "GAFP01":
-          acStr = "Animal Crossing (EUR)";
-          break;
-        case "GAFU01":
-          acStr = "Animal Crossing (AUS)";
-          break;
-      }
-          
-      if (gafTest == false || muraTest == false) {
-        setMessage("This file is invalid.", "red");
-      }
-      else {
-        setMessage("This file is valid. (" + acStr + " / " + gafStr + ", " + muraStr + ")", "green");
-
-        if (gafStr == "GAEJ01") {
-          getAcreHex(fileArray, "0002C100", "0002C18B");
-        } 
-        else if (gafStr == "GAFJ01") {
-          getAcreHex(fileArray, "00015F28", "00015FB3");
-        } 
-        else {
-          getAcreHex(fileArray, "0003D3E8", "0003D473");
-        }
-      }
-    });
-  });
 });
+
+function gciLoad() {
+  const reader = new FileReader();
+  map.innerHTML = "";
+  uploads = event.target.files;
+  uploadedFile = uploads[0]
+
+  reader.readAsArrayBuffer(uploadedFile);
+
+  reader.addEventListener("load", (event) => {
+    const fileBuffer = event.target.result;
+    const fileArray = new Uint8Array(fileBuffer);
+
+    let acStr = "Animal Crossing (USA)";
+
+    let gafStr = getHexString(fileArray, "00000000", "00000005");
+    let gafTest = RegExp("GA\[E,F]\[E,J,P,U]01").test(gafStr);
+    let muraStr = getHexString(fileArray, "00000008", "0000001A");
+    let muraTest = RegExp("Dobutsunomori\[P,E]_MURA").test(muraStr);
+
+    switch(gafStr) {
+      case "GAFJ01":
+        acStr = "Dōbutsu no Mori+";
+        break;
+      case "GAEJ01":
+        acStr = "Dōbutsu no Mori e+";
+        break;
+      case "GAFP01":
+        acStr = "Animal Crossing (EUR)";
+        break;
+      case "GAFU01":
+        acStr = "Animal Crossing (AUS)";
+        break;
+    }
+        
+    if (gafTest == false || muraTest == false) {
+      setMessage("This file is invalid.", "red");
+    }
+    else {
+      setMessage("This file is valid. (" + acStr + " / " + gafStr + ", " + muraStr + ")", "green");
+
+      if (gafStr == "GAEJ01") {
+        getAcreHex(fileArray, "0002C100", "0002C18B");
+      } 
+      else if (gafStr == "GAFJ01") {
+        getAcreHex(fileArray, "00015F28", "00015FB3");
+      } 
+      else {
+        getAcreHex(fileArray, "0003D3E8", "0003D473");
+      }
+    }
+  });
+}
 
 function setMessage(message, color) {
   msg.innerText = message;
