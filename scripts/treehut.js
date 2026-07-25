@@ -103,12 +103,12 @@ function gciLoad(event) {
     const fileBuffer = loadEvent.target.result;
     const fileArray = new Uint8Array(fileBuffer);
 
+    const gafStr = getHexString(fileArray, "00000000", "00000005");
+    const gafTest = RegExp("GA\[E,F]\[E,J,P,U]01").test(gafStr);
+    const muraStr = getHexString(fileArray, "00000008", "0000001A");
+    const muraTest = RegExp("Dobutsunomori\[P,E]_MURA").test(muraStr);
+    
     let acStr = "Animal Crossing (USA)";
-
-    let gafStr = getHexString(fileArray, "00000000", "00000005");
-    let gafTest = RegExp("GA\[E,F]\[E,J,P,U]01").test(gafStr);
-    let muraStr = getHexString(fileArray, "00000008", "0000001A");
-    let muraTest = RegExp("Dobutsunomori\[P,E]_MURA").test(muraStr);
 
     switch(gafStr) {
       case "GAFJ01":
@@ -127,19 +127,19 @@ function gciLoad(event) {
         
     if (gafTest == false || muraTest == false) {
       setMessage("This file is invalid.", "red");
+      return;
     }
-    else {
-      setMessage("This file is valid. (" + acStr + " / " + gafStr + ", " + muraStr + ")", "green");
 
-      if (gafStr == "GAEJ01") {
-        getAcreHex(fileArray, "0002C100", "0002C18B");
-      } 
-      else if (gafStr == "GAFJ01") {
-        getAcreHex(fileArray, "00015F28", "00015FB3");
-      } 
-      else {
-        getAcreHex(fileArray, "0003D3E8", "0003D473");
-      }
+    setMessage("This file is valid. (" + acStr + " / " + gafStr + ", " + muraStr + ")", "green");
+
+    if (gafStr == "GAEJ01") {
+      getAcreHex(fileArray, "0002C100", "0002C18B");
+    } 
+    else if (gafStr == "GAFJ01") {
+      getAcreHex(fileArray, "00015F28", "00015FB3");
+    } 
+    else {
+      getAcreHex(fileArray, "0003D3E8", "0003D473");
     }
   });
 }
@@ -186,10 +186,17 @@ function getAcreHex(array, startHex, endHex) {
   
   if (hex.length / 2 != 70) {
     setMessage("The acre data for this save file is invalid.", "red");
+    return;
   }
+
+  const ctBlockMatch = combitype.match(new RegExp("enum\\s+__block_combi__\\s*\\{([\\s\\S]*)\\}\\s*;"));
+  const ctContent = ctBlockMatch[1];
 
   let acreHex = new Array(70);
   let acreHexIdx = 0;
+
+  let ctItems = ctContent.split(',');
+  ctItems = ctItems.map(item => item.trim());
 
   for (let i = 0; i < hex.length; i += 2) {
     const acreFirst = hex[i].toString(16).padStart(2, "0").toUpperCase();
@@ -206,9 +213,11 @@ function getAcreHex(array, startHex, endHex) {
     let acreHexElevation = acreHex[i];
     let acreHexBase = "0x" + (acreHexElevation & ~0x0003).toString(16).padStart(4, "0").toUpperCase();
     let arrayIndex = (acreHexBase >> 2);
+    let ctName = ctItems[arrayIndex];
 
     acre.className = "acre";
     acre.innerText = acreHexElevation + "\n" + acreHexBase + "\n" + arrayIndex;
+    acre.title = ctName;
     mapGrid.append(acre);
   }
 
