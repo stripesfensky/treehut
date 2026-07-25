@@ -80,12 +80,14 @@ async function treehut() {
   }
 }
 
-setTimeout(() => {
-  asyncWait.style.opacity = 1;
+window.addEventListener("load", () => {
   setTimeout(() => {
-    treehut();
-  }, 1500);
-}, 500);
+    asyncWait.style.opacity = 1;
+    setTimeout(() => {
+      treehut();
+    }, 1500);
+  }, 500);
+});
 
 gci.addEventListener("change", (event) => {
   const reader = new FileReader();
