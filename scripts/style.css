@@ -130,5 +130,6 @@ ul {
 .acre svg {
   display: block;
   height: 100%;
+  shape-rendering: crispEdges;
   width: 100%;
 }
