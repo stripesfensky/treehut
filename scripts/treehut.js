@@ -275,7 +275,7 @@ function getAcreHex(array, startHex, endHex) {
         const tileY = Math.floor(i / 16);
         const tileColor = getTileColor(bgAttribs[i]);
 
-        tiles += "<rect x=\"" + tileX + "\" y=\"" + tileY + "\" width=\"1\" height=\"1\" fill=\"" + tileColor + "\"/>";
+        tiles += "<rect x=\"" + tileX + "\" y=\"" + tileY + "\" width=\"1.05\" height=\"1.05\" fill=\"" + tileColor + "\"/>";
       }
 
       tiles += "</svg>";
