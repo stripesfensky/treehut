@@ -84,13 +84,13 @@ window.addEventListener("load", () => {
 
     if (acre != null) {
       clickEvent.preventDefault();
-      const acreTitle = acre.getAttribute("title");
       const acreID = acre.getAttribute("data-acreid");
       const arrayID = acre.getAttribute("data-arrayid");
+      const bgType = acre.getAttribute("data-bgtype");
 
-      if (acreTitle != null) {
-        navigator.clipboard.writeText(acreTitle);
-        console.log("Copied to clipboard: " + acreTitle + " (" + acreID + ", " + arrayID + ")");
+      if (bgType != null) {
+        navigator.clipboard.writeText(bgType);
+        console.log("Copied to clipboard: " + bgType + " (" + acreID + ", " + arrayID + ")");
         acre.classList.add("selected");
 
         setTimeout(() => {
@@ -214,13 +214,13 @@ function getAcreHex(array, startHex, endHex) {
     return;
   }
 
-  const ctBlockMatch = combi.match(new RegExp("data_combi_table\\s*\\[\\s*\\]\\s*=\\s*\\{\\s*([\\s\\S]*?)\\s*\\};"));
+  const ctBlockMatch = combi.match(RegExp("data_combi_table\\s*\\[\\s*\\]\\s*=\\s*\\{\\s*([\\s\\S]*?)\\s*\\};"));
   const ctContent = ctBlockMatch[1];
 
   let acreHex = new Array(70);
   let acreHexIdx = 0;
 
-  let ctItems = ctContent.match(new RegExp("BG_TYPE_\\w+", "g"));
+  let ctItems = ctContent.match(RegExp("BG_TYPE_\\w+", "g"));
 
   for (let i = 0; i < hex.length; i += 2) {
     const acreFirst = hex[i].toString(16).padStart(2, "0").toUpperCase();
@@ -258,16 +258,40 @@ function getAcreHex(array, startHex, endHex) {
       let ctName = ctItems[arrayIndex];
 
       acre.className = "acre";
-      acre.style.backgroundImage = "url(\"acres\/" + ctName + ".png\")";
-      acre.style.backgroundSize = "contain";
-      acre.setAttribute("title", ctName);
       acre.setAttribute("data-acreid", acreHexBase);
       acre.setAttribute("data-arrayid", arrayIndex);
+      acre.setAttribute("data-bgtype", ctName);
+      acre.setAttribute("data-island", "false");
+      acre.setAttribute("data-edge", "none");
+
+      const bgBlockMatch = bgdata.match(RegExp("(" + ctName + ")[\\s\\S]*?(\\{[\\s\\S]*?\\}\\s*,\\s*\\}\\s*,\\s*\\})\\s*(?=,)"));
+      const bgContent = bgBlockMatch[2];
+      const bgAttribs = bgContent.match(RegExp("mCoBG_ATTRIBUTE_\\w+", "g"));
+
+      let tiles = "<svg viewBox=\"0 0 16 16\" width=\"100%\" height=\"100%\">";
+
+      for (let i = 0; i < bgAttribs.length; i++) {
+        const tileX = i % 16;
+        const tileY = Math.floor(i / 16);
+        const tileColor = getTileColor(bgAttribs[i]);
+
+        tiles += "<rect x=\"" + tileX + "\" y=\"" + tileY + "\" width=\"1\" height=\"1\" fill=\"" + tileColor + "\"/>";
+      }
+
+      tiles += "</svg>";
+      acre.innerHTML = tiles;
 
       if (row == 9) {
-        islandGrid.append(acre);      
+        acre.setAttribute("data-island", "true");
+        islandGrid.append(acre);
       }
       else {
+        if (col == 2) {
+          acre.setAttribute("data-edge", "left");
+        }
+        else if (col == 6) {
+          acre.setAttribute("data-edge", "right");
+        }
         townGrid.append(acre);
       }
     }
@@ -280,4 +304,20 @@ function getAcreHex(array, startHex, endHex) {
   map.innerHTML += "<p>Click on an acre to open the close-up view (coming soon)!</p>";
   map.appendChild(townGrid);
   map.appendChild(islandGrid);
+}
+
+function getTileColor(bgType) {
+  if (bgType.includes("WATER")) return "rgb(30, 100, 220)";
+  if (bgType.includes("RIVER")) return "rgb(50, 140, 240)";
+  if (bgType.includes("SEA")) return "rgb(10, 60, 180)";
+  if (bgType.includes("WAVE")) return "rgb(70, 160, 240)";
+  if (bgType.includes("GRASS")) return "rgb(40, 160, 70)";
+  if (bgType.includes("SOIL")) return "rgb(130, 90, 60)";
+  if (bgType.includes("STONE")) return "rgb(120, 120, 120)";
+  if (bgType.includes("WOOD")) return "rgb(160, 110, 70)";
+  if (bgType.includes("FLOOR")) return "rgb(155, 115, 85)";
+  if (bgType.includes("BUSH")) return "rgb(20, 100, 40)";
+  if (bgType.includes("WALL")) return "rgb(70, 70, 70)";
+  
+  return "rgb(230, 50, 230)";
 }
