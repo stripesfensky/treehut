@@ -111,17 +111,9 @@ ul {
 }
 
 .acre {
-  align-items: center;
   aspect-ratio: 1 / 1;
-  display: flex;
-  font-size: clamp(6px, 4px + 1.3333vw, 12px);
-  justify-content: center;
   min-width: 0;
-  overflow: hidden;
-  text-align: center;
-  text-overflow: clip;
   transition: opacity 0.5s;
-  white-space: nowrap;
   width: 100%;
 }
 
@@ -133,4 +125,10 @@ ul {
 
 .acre.selected {
   opacity: 0.25;
+}
+
+.acre svg {
+  display: block;
+  height: 100%;
+  width: 100%;
 }
