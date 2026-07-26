@@ -229,27 +229,55 @@ function getAcreHex(array, startHex, endHex) {
     acreHexIdx += 1;
   }
 
-  let mapGrid = document.createElement("div");
+  let townGrid = document.createElement("div");
+  let islandGrid = document.createElement("div");
 
   for (let i = 0; i < acreHex.length; i++) {
     let acre = document.createElement("div");
+    let row = Math.floor(i / 7) + 1;
+    let col = (i % 7) + 1;
+    let skip = false;
+    
+    if (row == 1 || row == 8 || row == 10){
+      skip = true;
+    }
+    else if (row >= 2 && row <= 7 && (col == 1 || col == 7)){
+      skip = true;
+    }
+    else if (row == 9 && (col <= 4 || col == 7)) {
+      if (col == 2 || col == 3 || col == 7) {
+        islandGrid.append(acre);
+      }
+      skip = true;
+    }
 
-    let acreHexElevation = acreHex[i];
-    let acreHexBase = "0x" + (acreHexElevation & ~0x0003).toString(16).padStart(4, "0").toUpperCase();
-    let arrayIndex = (acreHexBase >> 2);
-    let ctName = ctItems[arrayIndex];
+    if (skip == false) {
+      let acreHexElevation = acreHex[i];
+      let acreHexBase = "0x" + (acreHexElevation & 0xFFFC).toString(16).padStart(4, "0").toUpperCase();
+      let arrayIndex = (acreHexBase >> 2);
+      let ctName = ctItems[arrayIndex];
 
-    ctName = ctName.replace("BLOCK_COMBI", "BG_TYPE");
-    acre.className = "acre";
-    acre.title = ctName;
-    acre.style.backgroundImage = "url(\"acres\/" + ctName + ".png\")";
-    acre.style.backgroundSize = "contain";
-    acre.setAttribute("data-acreid", acreHexBase);
-    acre.setAttribute("data-arrayid", arrayIndex);
-    mapGrid.append(acre);
+      acre.className = "acre";
+      acre.style.backgroundImage = "url(\"acres\/" + ctName + ".png\")";
+      acre.style.backgroundSize = "contain";
+      acre.setAttribute("title", ctName);
+      acre.setAttribute("data-acreid", acreHexBase);
+      acre.setAttribute("data-arrayid", arrayIndex);
+
+      if (row == 9) {
+        islandGrid.append(acre);      
+      }
+      else {
+        townGrid.append(acre);
+      }
+    }
   }
 
-  mapGrid.id = "mapgrid";
+  townGrid.id = "towngrid";
+  islandGrid.id = "islandgrid";
+
   map.innerHTML = "<h2>Map</h2>";
-  map.appendChild(mapGrid);
+  map.innerHTML += "<p>Click on an acre to open the close-up view (coming soon)!</p>";
+  map.appendChild(townGrid);
+  map.appendChild(islandGrid);
 }
