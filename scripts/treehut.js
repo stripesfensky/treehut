@@ -342,7 +342,7 @@ const tileColorRules = [
     color: "rgb(35, 64, 173)"
   },
   {
-    match: /SOIL/,
+    match: /SOIL|_(63)/,
     color: "rgb(202, 195, 103)"
   },
   {
@@ -362,16 +362,8 @@ const tileColorRules = [
     color: "rgb(77, 122, 208)"
   },
   {
-    match: /_(39|4[0-9]|5[05-9]|6[0-2])/, // RIVER BANKS & CLIFFS
+    match: /_(39|4[0-9]|5[0-9]|6[0-2])/, // RIVER BANKS & CLIFFS
     color: "rgb(107, 75, 95)"
-  },
-  {
-    match: /_(5[1-4])/, // SLOPED GRASS
-    color: "rgb(25, 102, 60)"
-  },
-  {
-    match: /_(63)/, // SLOPED SOIL
-    color: "rgb(146, 141, 73)"
   }
 ];
 
