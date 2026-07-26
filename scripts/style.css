@@ -92,8 +92,6 @@ ul, ol {
 }
 
 #mapgrid {
-  /*background-color: black;
-  border: 1px solid black;*/
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   max-width: 100%;
@@ -102,25 +100,24 @@ ul, ol {
 .acre {
   align-items: center;
   aspect-ratio: 1 / 1;
-  /*background-color: white;*/
   display: flex;
   font-size: clamp(6px, 4px + 1.3333vw, 12px);
   justify-content: center;
   min-width: 0;
-  /*outline: 1px solid black;*/
   overflow: hidden;
   text-align: center;
   text-overflow: clip;
-  transition: background-color 0.5s;
+  transition: opacity 0.5s;
   white-space: nowrap;
   width: 100%;
 }
 
-.acre:hover {
-  outline: 5px solid red;
+.acre:hover, .acre:active, .acre:focus {
+  cursor: pointer;
+  outline: 5px solid fuchsia;
   outline-offset: -5px;
 }
 
 .acre.selected {
-  background-color: red;
+  opacity: 0.25;
 }
