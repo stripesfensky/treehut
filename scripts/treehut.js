@@ -79,16 +79,18 @@ window.addEventListener("load", () => {
   asyncTrace = document.getElementById("asynctrace");
   uploadForm = document.getElementById("upload");
 
-  map.addEventListener("contextmenu", (mapEvent) => {
-    const acre = mapEvent.target.closest(".acre");
+  map.addEventListener("click", (clickEvent) => {
+    const acre = clickEvent.target.closest(".acre");
 
     if (acre != null) {
-      mapEvent.preventDefault();
+      clickEvent.preventDefault();
       const acreTitle = acre.getAttribute("title");
+      const acreID = acre.getAttribute("data-acreid");
+      const arrayID = acre.getAttribute("data-arrayid");
 
       if (acreTitle != null) {
         navigator.clipboard.writeText(acreTitle);
-        console.log("Copied to clipboard: " + acreTitle);
+        console.log("Copied to clipboard: " + acreTitle + " (" + acreID + ", " + arrayID + ")");
         acre.classList.add("selected");
 
         setTimeout(() => {
@@ -98,8 +100,12 @@ window.addEventListener("load", () => {
     }
   });
 
-  gci.addEventListener("change", (event) => {
-    gciLoad(event);
+  map.addEventListener("contextmenu", (contextEvent) => {
+      contextEvent.preventDefault();
+  });
+
+  gci.addEventListener("change", (gciEvent) => {
+    gciLoad(gciEvent);
   });
 
   setTimeout(() => {
@@ -234,10 +240,23 @@ function getAcreHex(array, startHex, endHex) {
     let arrayIndex = (acreHexBase >> 2);
     let ctName = ctItems[arrayIndex];
 
+    ctName = ctName.replace("BLOCK_COMBI", "BG_TYPE");
+    console.log(acreHexBase + ", " + arrayIndex + ", " + ctName);
+    // const ctMatch = ctName.match(new RegExp("BG_TYPE_GRD_S_M_\\d{1,}(_\\d{1,})"));
+
+    // if (ctMatch) {
+    //   console.log(ctMatch[1]); 
+    //   console.log(ctName);
+    //   ctName = ctName.replace(ctMatch[1], "");
+    //   console.log(ctName);
+    // }
+
     acre.className = "acre";
-    acre.title = ctName.replace("BLOCK_COMBI", "BG_TYPE");
-    acre.style.backgroundImage = "url(\"acres\/" + acre.title + ".png\")";
+    acre.title = ctName;
+    /*acre.style.backgroundImage = "url(\"acres\/" + ctName + ".png\")";*/
     acre.style.backgroundSize = "contain";
+    acre.setAttribute("data-acreid", acreHexBase);
+    acre.setAttribute("data-arrayid", arrayIndex);
     mapGrid.append(acre);
   }
 
