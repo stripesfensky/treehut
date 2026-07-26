@@ -1,11 +1,11 @@
 const bgdataURL = "https://raw.githubusercontent.com/ACreTeam/ac-decomp/refs/heads/master/src/data/field/bg/acre/bg_data.c";
-const combitypeURL = "https://raw.githubusercontent.com/ACreTeam/ac-decomp/refs/heads/master/include/m_combi_type.h";
+const combiURL = "https://raw.githubusercontent.com/ACreTeam/ac-decomp/master/src/data/combi/data_combi.c";
 
 let asyncFail;
 let asyncTrace;
 let asyncWait;
 let bgdata;
-let combitype;
+let combi;
 let gci;
 let hex;
 let map;
@@ -39,7 +39,7 @@ async function getDecompSource(url) {
 
 async function treehut() {
   try {
-    const decomp = await Promise.allSettled([getDecompSource(bgdataURL), getDecompSource(combitypeURL)]);
+    const decomp = await Promise.allSettled([getDecompSource(bgdataURL), getDecompSource(combiURL)]);
     const decompFailures = decomp.filter(r => r.status == "rejected");
 
     if (decompFailures.length > 0) {
@@ -48,7 +48,7 @@ async function treehut() {
     }
 
     bgdata = decomp[0].value;
-    combitype = decomp[1].value;
+    combi = decomp[1].value;
 
     asyncWait.classList.add("asyncinvisible");
 
@@ -214,14 +214,13 @@ function getAcreHex(array, startHex, endHex) {
     return;
   }
 
-  const ctBlockMatch = combitype.match(new RegExp("enum\\s+__block_combi__\\s*\\{([\\s\\S]*)\\}\\s*;"));
+  const ctBlockMatch = combi.match(new RegExp("data_combi_table\\s*\\[\\s*\\]\\s*=\\s*\\{\\s*([\\s\\S]*?)\\s*\\};"));
   const ctContent = ctBlockMatch[1];
 
   let acreHex = new Array(70);
   let acreHexIdx = 0;
 
-  let ctItems = ctContent.split(',');
-  ctItems = ctItems.map(item => item.trim());
+  let ctItems = ctContent.match(new RegExp("BG_TYPE_\\w+", "g"));
 
   for (let i = 0; i < hex.length; i += 2) {
     const acreFirst = hex[i].toString(16).padStart(2, "0").toUpperCase();
@@ -241,16 +240,6 @@ function getAcreHex(array, startHex, endHex) {
     let ctName = ctItems[arrayIndex];
 
     ctName = ctName.replace("BLOCK_COMBI", "BG_TYPE");
-    console.log(acreHexBase + ", " + arrayIndex + ", " + ctName);
-    // const ctMatch = ctName.match(new RegExp("BG_TYPE_GRD_S_M_\\d{1,}(_\\d{1,})"));
-
-    // if (ctMatch) {
-    //   console.log(ctMatch[1]); 
-    //   console.log(ctName);
-    //   ctName = ctName.replace(ctMatch[1], "");
-    //   console.log(ctName);
-    // }
-
     acre.className = "acre";
     acre.title = ctName;
     acre.style.backgroundImage = "url(\"acres\/" + ctName + ".png\")";
