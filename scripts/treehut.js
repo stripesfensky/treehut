@@ -129,9 +129,9 @@ function gciLoad(event) {
     const fileArray = new Uint8Array(fileBuffer);
 
     const gafStr = getHexString(fileArray, "00000000", "00000005");
-    const gafTest = RegExp("GA\[E,F]\[E,J,P,U]01").test(gafStr);
+    const gafTest = /GA[EF][EJPU]01/.test(gafStr);
     const muraStr = getHexString(fileArray, "00000008", "0000001A");
-    const muraTest = RegExp("Dobutsunomori\[P,E]_MURA").test(muraStr);
+    const muraTest = /Dobutsunomori[PE]_MURA/.test(muraStr);
     
     let acStr = "Animal Crossing (USA)";
 
@@ -214,13 +214,13 @@ function getAcreHex(array, startHex, endHex) {
     return;
   }
 
-  const ctBlockMatch = combi.match(RegExp("data_combi_table\\s*\\[\\s*\\]\\s*=\\s*\\{\\s*([\\s\\S]*?)\\s*\\};"));
+  const ctBlockMatch = combi.match(/data_combi_table\s*\[\s*\]\s*=\s*\{\s*([\s\S]*?)\s*\};/);
   const ctContent = ctBlockMatch[1];
 
   let acreHex = new Array(70);
   let acreHexIdx = 0;
 
-  let ctItems = ctContent.match(RegExp("BG_TYPE_\\w+", "g"));
+  let ctItems = ctContent.match(/BG_TYPE_\w+/g);
 
   for (let i = 0; i < hex.length; i += 2) {
     const acreFirst = hex[i].toString(16).padStart(2, "0").toUpperCase();
@@ -231,6 +231,7 @@ function getAcreHex(array, startHex, endHex) {
 
   let townGrid = document.createElement("div");
   let islandGrid = document.createElement("div");
+  let unknownTiles = new Array;
 
   for (let i = 0; i < acreHex.length; i++) {
     let acre = document.createElement("div");
@@ -266,7 +267,7 @@ function getAcreHex(array, startHex, endHex) {
 
       const bgBlockMatch = bgdata.match(RegExp("(" + ctName + ")[\\s\\S]*?(\\{[\\s\\S]*?\\}\\s*,\\s*\\}\\s*,\\s*\\})\\s*(?=,)"));
       const bgContent = bgBlockMatch[2];
-      const bgAttribs = bgContent.match(RegExp("mCoBG_ATTRIBUTE_\\w+", "g"));
+      const bgAttribs = bgContent.match(/mCoBG_ATTRIBUTE_\w+/g);
 
       let tiles = "<svg viewBox=\"0 0 16 16\" width=\"100%\" height=\"100%\">";
 
@@ -274,6 +275,10 @@ function getAcreHex(array, startHex, endHex) {
         const tileX = i % 16;
         const tileY = Math.floor(i / 16);
         const tileColor = getTileColor(bgAttribs[i]);
+        
+        if (tileColor == "rgb(230, 50, 230)") {
+          unknownTiles.push(bgAttribs[i]);
+        }
 
         tiles += "<rect x=\"" + tileX + "\" y=\"" + tileY + "\" width=\"1.05\" height=\"1.05\" fill=\"" + tileColor + "\"/>";
       }
@@ -304,20 +309,78 @@ function getAcreHex(array, startHex, endHex) {
   map.innerHTML += "<p>Click on an acre to open the close-up view (coming soon)!</p>";
   map.appendChild(townGrid);
   map.appendChild(islandGrid);
+
+  unknownTiles = Array.from(new Set(unknownTiles));
+
+  if(unknownTiles.length > 0) {
+    unknownTiles = unknownTiles.sort();
+    for (let i = 0; i < unknownTiles.length; i++) {
+      console.log("Unknown tile type: " + unknownTiles[i]);
+    }
+  }
 }
 
+const tileColorRules = [
+  {
+    match: /BUSH/,
+    color: "rgb(47, 106, 59)"
+  },
+  {
+    match: /GRASS/,
+    color: "rgb(39, 160, 93)"
+  },
+  {
+    match: /RIVER|WATER(?!FALL)/,
+    color: "rgb(60, 87, 189)"
+  },
+  {
+    match: /SAND/,
+    color: "rgb(209, 191, 151)"
+  },
+  {
+    match: /SEA/,
+    color: "rgb(35, 64, 173)"
+  },
+  {
+    match: /SOIL/,
+    color: "rgb(202, 195, 103)"
+  },
+  {
+    match: /STONE|_(3[2-5])/,
+    color: "rgb(141, 186, 204)"
+  },
+  {
+    match: /WATERFALL/,
+    color: "rgb(129, 178, 244)"
+  },
+  {
+    match: /WOOD|_(2[7-9]|3[01])/,
+    color: "rgb(172, 121, 102)"
+  },
+  {
+    match: /_(2[56]|3[6-8])/, // WAVES
+    color: "rgb(77, 122, 208)"
+  },
+  {
+    match: /_(39|4[0-9]|5[05-9]|6[0-2])/, // RIVER BANKS & CLIFFS
+    color: "rgb(107, 75, 95)"
+  },
+  {
+    match: /_(5[1-4])/, // SLOPED GRASS
+    color: "rgb(25, 102, 60)"
+  },
+  {
+    match: /_(63)/, // SLOPED SOIL
+    color: "rgb(146, 141, 73)"
+  }
+];
+
 function getTileColor(bgType) {
-  if (bgType.includes("WATER")) return "rgb(30, 100, 220)";
-  if (bgType.includes("RIVER")) return "rgb(50, 140, 240)";
-  if (bgType.includes("SEA")) return "rgb(10, 60, 180)";
-  if (bgType.includes("WAVE")) return "rgb(70, 160, 240)";
-  if (bgType.includes("GRASS")) return "rgb(40, 160, 70)";
-  if (bgType.includes("SOIL")) return "rgb(130, 90, 60)";
-  if (bgType.includes("STONE")) return "rgb(120, 120, 120)";
-  if (bgType.includes("WOOD")) return "rgb(160, 110, 70)";
-  if (bgType.includes("FLOOR")) return "rgb(155, 115, 85)";
-  if (bgType.includes("BUSH")) return "rgb(20, 100, 40)";
-  if (bgType.includes("WALL")) return "rgb(70, 70, 70)";
-  
-  return "rgb(230, 50, 230)";
+  for (const rule of tileColorRules) {
+    if (rule.match.test(bgType)) {
+      return rule.color;
+    }
+  }
+
+  return "rgb(255, 255, 255)";
 }
