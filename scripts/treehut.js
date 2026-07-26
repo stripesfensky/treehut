@@ -253,7 +253,7 @@ function getAcreHex(array, startHex, endHex) {
 
     acre.className = "acre";
     acre.title = ctName;
-    /*acre.style.backgroundImage = "url(\"acres\/" + ctName + ".png\")";*/
+    acre.style.backgroundImage = "url(\"acres\/" + ctName + ".png\")";
     acre.style.backgroundSize = "contain";
     acre.setAttribute("data-acreid", acreHexBase);
     acre.setAttribute("data-arrayid", arrayIndex);
