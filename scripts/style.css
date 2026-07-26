@@ -27,8 +27,8 @@ body {
   display: flex;
   flex-direction: column;
   min-height: calc(100% - 100px);
-  margin: 50px auto;
-  padding: 50px;
+  margin: 70px auto;
+  padding: 70px;
   max-width: 590px;
   width: 100%;
   box-sizing: border-box;
@@ -40,9 +40,18 @@ h1 {
 
 h2 {
   margin-top: 20px;
+  margin-bottom: 0px;
 }
 
-ul, ol {
+p, ul {
+  margin-top: 7.5px;
+}
+
+p {
+  margin-bottom: 0px;
+}
+
+ul {
   list-style-position: inside;
   list-style-type: square;
   padding-left: 0;
@@ -91,9 +100,13 @@ ul, ol {
   flex: 1 0 auto;
 }
 
-#mapgrid {
+#towngrid {
+  margin-top: 20px;
+}
+
+#towngrid, #islandgrid {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   max-width: 100%;
 }
 
