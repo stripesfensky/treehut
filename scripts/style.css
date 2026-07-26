@@ -120,7 +120,7 @@ ul {
 
 .acre:hover, .acre:active, .acre:focus {
   cursor: pointer;
-  outline: 5px solid fuchsia;
+  outline: 5px solid rgb(255, 91, 220);
   outline-offset: -5px;
 }
 
