@@ -8,7 +8,7 @@ let bgdata;
 let combi;
 let gci;
 let hex;
-let map;
+let maps;
 let msg;
 let uploadedFile;
 let uploadForm;
@@ -73,13 +73,13 @@ window.addEventListener("load", () => {
   msg = document.getElementById("msg");
   gci = document.getElementById("gci");
   hex = document.getElementById("hex");
-  map = document.getElementById("map");
+  maps = document.getElementById("maps");
   asyncWait = document.getElementById("asyncwait");
   asyncFail = document.getElementById("asyncfail");
   asyncTrace = document.getElementById("asynctrace");
   uploadForm = document.getElementById("upload");
 
-  map.addEventListener("click", (clickEvent) => {
+  maps.addEventListener("click", (clickEvent) => {
     const acre = clickEvent.target.closest(".acre");
 
     if (acre != null) {
@@ -100,7 +100,7 @@ window.addEventListener("load", () => {
     }
   });
 
-  map.addEventListener("contextmenu", (contextEvent) => {
+  maps.addEventListener("contextmenu", (contextEvent) => {
       contextEvent.preventDefault();
   });
 
@@ -118,7 +118,7 @@ window.addEventListener("load", () => {
 
 function gciLoad(event) {
   const reader = new FileReader();
-  map.innerHTML = "";
+  maps.innerHTML = "";
   uploads = event.target.files;
   uploadedFile = uploads[0]
 
@@ -245,11 +245,10 @@ function getAcreHex(array, startHex, endHex) {
     else if (row >= 2 && row <= 7 && (col == 1 || col == 7)){
       skip = true;
     }
-    else if (row == 9 && (col <= 4 || col == 7)) {
-      if (col == 2 || col == 3 || col == 7) {
-        islandGrid.append(acre);
+    else if (row == 9) {
+      if (col < 5 || col > 6) {
+        skip = true;
       }
-      skip = true;
     }
 
     if (skip == false) {
@@ -305,10 +304,12 @@ function getAcreHex(array, startHex, endHex) {
   townGrid.id = "towngrid";
   islandGrid.id = "islandgrid";
 
-  map.innerHTML = "<h2>Map</h2>";
-  map.innerHTML += "<p>Click on an acre to open the close-up view (coming soon)!</p>";
-  map.appendChild(townGrid);
-  map.appendChild(islandGrid);
+  maps.innerHTML = "<h2>Maps</h2>";
+  maps.innerHTML += "<p>Click on an acre to view it up close.</p>";
+  maps.innerHTML += "<h3>Town Map</h3>";
+  maps.appendChild(townGrid);
+  maps.innerHTML += "<h3>Island Map</h3>"
+  maps.appendChild(islandGrid);
 
   unknownTiles = Array.from(new Set(unknownTiles));
 
