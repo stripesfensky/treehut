@@ -96,12 +96,8 @@ ul {
   flex: 1;
 }
 
-#map {
+#maps {
   flex: 1 0 auto;
-}
-
-#towngrid {
-  margin-top: 20px;
 }
 
 #towngrid, #islandgrid {
