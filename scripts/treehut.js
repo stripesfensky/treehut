@@ -155,7 +155,6 @@ function gciLoad(event) {
         startOffset = 0x10040;
         acreOffset = 0x1C0C0;
         townOffset = 0x184C0;
-        islandOffset = 0x1B450; // FIX
         break;
       case "GAFP01":
         acStr = "Animal Crossing (EUR)";
@@ -174,13 +173,17 @@ function gciLoad(event) {
 
     let startAcreHex = startOffset + acreOffset;
     let endAcreHex = startAcreHex + acreSize;
-
-    getAcreData(fileArray, startAcreHex, endAcreHex);
+    getAcreData(fileArray, startAcreHex, endAcreHex, gafStr);
 
     let startTownHex = startOffset + townOffset;
     let endTownHex = startTownHex + townSize;
-
     getTownData(fileArray, startTownHex, endTownHex);
+
+    if (gafStr != "GAEJ01") {
+      let startIslandHex = startOffset + islandOffset;
+      let endIslandHex = startIslandHex + islandSize;
+      getIslandData(fileArray, startIslandHex, endIslandHex);
+    }
   });
 }
 
@@ -213,7 +216,7 @@ function getHexString(array, start, end) {
   return valueStr;
 }
 
-function getAcreData(array, start, end) {
+function getAcreData(array, start, end, gafStr) {
   const hex = getHex(array, start, end);
   
   if (hex.length / 2 != 70) {
@@ -246,7 +249,7 @@ function getAcreData(array, start, end) {
     let col = (i % 7) + 1;
     let skip = false;
     
-    if (row == 1 || row == 8 || row == 10){
+    if (row == 1 || row == 8 || row == 10 || (gafStr == "GAEJ01" && row == 9)){
       skip = true;
     }
     else if (row >= 2 && row <= 7 && (col == 1 || col == 7)){
@@ -292,7 +295,7 @@ function getAcreData(array, start, end) {
       tiles += "</svg>";
       acre.innerHTML = tiles;
 
-      if (row == 9) {
+      if (gafStr != "GAEJ01" && row == 9) {
         acre.setAttribute("data-island", "true");
         islandGrid.append(acre);
       }
@@ -309,14 +312,16 @@ function getAcreData(array, start, end) {
   }
 
   townGrid.id = "towngrid";
-  islandGrid.id = "islandgrid";
-
   maps.innerHTML = "<h2>Maps</h2>";
   maps.innerHTML += "<p>Click on an acre to view it up close.</p>";
   maps.innerHTML += "<h3>Town Map</h3>";
   maps.appendChild(townGrid);
-  maps.innerHTML += "<h3>Island Map</h3>"
-  maps.appendChild(islandGrid);
+
+  if (gafStr != "GAEJ01") {
+    islandGrid.id = "islandgrid";
+    maps.innerHTML += "<h3>Island Map (DnM+ / Animal Crossing)</h3>"
+    maps.appendChild(islandGrid);
+  }
 
   unknownTiles = Array.from(new Set(unknownTiles));
 
@@ -386,5 +391,9 @@ function getTileColor(bgType) {
 }
 
 function getTownData(array, start, end) {
+  return;
+}
+
+function getIslandData(array, start, end) {
   return;
 }
