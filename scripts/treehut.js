@@ -6,13 +6,7 @@ let asyncTrace;
 let asyncWait;
 let bgdata;
 let combi;
-let gci;
-let hex;
-let maps;
-let msg;
-let uploadedFile;
 let uploadForm;
-let uploads;
 
 async function getDecompSource(url) {
   console.log("Loading from URL \"" + url + "\"");
@@ -32,7 +26,7 @@ async function getDecompSource(url) {
   }
   
   const result = await response.text();
-  console.log("Loading was successful for URL\"" + url + "\"");
+  console.log("Loading was successful for URL \"" + url + "\"");
 
   return result;
 }
@@ -70,14 +64,23 @@ async function treehut() {
 }
 
 window.addEventListener("load", () => {
-  msg = document.getElementById("msg");
-  gci = document.getElementById("gci");
-  hex = document.getElementById("hex");
-  maps = document.getElementById("maps");
+  let gci = document.getElementById("gci");
+  let msg = document.getElementById("msg");
+  let maps = document.getElementById("maps");
+  let uploads;
+  let uploadedFile;
+  
+  let townData;
+  let islandData;
+
   asyncWait = document.getElementById("asyncwait");
   asyncFail = document.getElementById("asyncfail");
   asyncTrace = document.getElementById("asynctrace");
   uploadForm = document.getElementById("upload");
+
+  gci.addEventListener("change", (gciEvent) => {
+    gciLoad(gciEvent);
+  });
 
   maps.addEventListener("click", (clickEvent) => {
     const acre = clickEvent.target.closest(".acre");
@@ -102,10 +105,6 @@ window.addEventListener("load", () => {
 
   maps.addEventListener("contextmenu", (contextEvent) => {
       contextEvent.preventDefault();
-  });
-
-  gci.addEventListener("change", (gciEvent) => {
-    gciLoad(gciEvent);
   });
 
   setTimeout(() => {
@@ -156,7 +155,7 @@ function gciLoad(event) {
         startOffset = 0x10040;
         acreOffset = 0x1C0C0;
         townOffset = 0x184C0;
-        islandOffset = 0x1B450;
+        islandOffset = 0x1B450; // FIX
         break;
       case "GAFP01":
         acStr = "Animal Crossing (EUR)";
@@ -176,7 +175,12 @@ function gciLoad(event) {
     let startAcreHex = startOffset + acreOffset;
     let endAcreHex = startAcreHex + acreSize;
 
-    getAcreHex(fileArray, startAcreHex, endAcreHex);
+    getAcreData(fileArray, startAcreHex, endAcreHex);
+
+    let startTownHex = startOffset + townOffset;
+    let endTownHex = startTownHex + townSize;
+
+    getTownData(fileArray, startTownHex, endTownHex);
   });
 }
 
@@ -209,7 +213,7 @@ function getHexString(array, start, end) {
   return valueStr;
 }
 
-function getAcreHex(array, start, end) {
+function getAcreData(array, start, end) {
   const hex = getHex(array, start, end);
   
   if (hex.length / 2 != 70) {
@@ -379,4 +383,8 @@ function getTileColor(bgType) {
   }
 
   return "rgb(255, 255, 255)";
+}
+
+function getTownData(array, start, end) {
+  return;
 }
