@@ -57,6 +57,10 @@ ul {
   padding-left: 0;
 }
 
+hr {
+  margin: 24px 0px;
+}
+
 #asyncwait, #asyncfail, #upload {
   display: none;
   opacity: 0;
