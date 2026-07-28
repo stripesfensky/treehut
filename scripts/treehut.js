@@ -128,19 +128,35 @@ function gciLoad(event) {
     const fileBuffer = loadEvent.target.result;
     const fileArray = new Uint8Array(fileBuffer);
 
-    const gafStr = getHexString(fileArray, "00000000", "00000005");
+    const gafStr = getHexString(fileArray, 0x00, 0x06);
     const gafTest = /GA[EF][EJPU]01/.test(gafStr);
-    const muraStr = getHexString(fileArray, "00000008", "0000001A");
+
+    const muraStr = getHexString(fileArray, 0x08, 0x1B);
     const muraTest = /Dobutsunomori[PE]_MURA/.test(muraStr);
     
     let acStr = "Animal Crossing (USA)";
+    let startOffset = 0x26040;
+    let acreOffset = 0x173A8;
+    let acreSize = 0x8C;
+    let townOffset = 0x137A8;
+    let townSize = 0x3C00;
+    let islandOffset = 0x22554;
+    let islandSize = 0x400;
 
     switch(gafStr) {
       case "GAFJ01":
         acStr = "Dōbutsu no Mori+";
+        startOffset = 0x2040;
+        acreOffset = 0x13EE8;
+        townOffset = 0x102E8;
+        islandOffset = 0x1B450;
         break;
       case "GAEJ01":
         acStr = "Dōbutsu no Mori e+";
+        startOffset = 0x10040;
+        acreOffset = 0x1C0C0;
+        townOffset = 0x184C0;
+        islandOffset = 0x1B450;
         break;
       case "GAFP01":
         acStr = "Animal Crossing (EUR)";
@@ -157,15 +173,10 @@ function gciLoad(event) {
 
     setMessage("This file is valid. (" + acStr + " / " + gafStr + ", " + muraStr + ")", "green");
 
-    if (gafStr == "GAEJ01") {
-      getAcreHex(fileArray, "0002C100", "0002C18B");
-    } 
-    else if (gafStr == "GAFJ01") {
-      getAcreHex(fileArray, "00015F28", "00015FB3");
-    } 
-    else {
-      getAcreHex(fileArray, "0003D3E8", "0003D473");
-    }
+    let startAcreHex = startOffset + acreOffset;
+    let endAcreHex = startAcreHex + acreSize;
+
+    getAcreHex(fileArray, startAcreHex, endAcreHex);
   });
 }
 
@@ -174,16 +185,8 @@ function setMessage(message, color) {
   msg.style.color = color;
 }
 
-function getSlicedArray(array, startHex, endHex) {
-  const start = parseInt(startHex, 16);
-  const end = parseInt(endHex, 16);
-  const sliced = array.slice(start, end + 1);
-
-  return sliced;
-}
-
-function getHex(array, startHex, endHex) {
-  const sliced = getSlicedArray(array, startHex, endHex);
+function getHex(array, start, end) {
+  const sliced = array.slice(start, end);
   let hexArray = new Array();
 
   for (let i = 0; i < sliced.length; i++) {
@@ -194,8 +197,8 @@ function getHex(array, startHex, endHex) {
   return hexArray;
 }
 
-function getHexString(array, startHex, endHex) {
-  const hex = getHex(array, startHex, endHex);
+function getHexString(array, start, end) {
+  const hex = getHex(array, start, end);
   let valueStr = "";
 
   for (let i = 0; i < hex.length; i++) {
@@ -206,8 +209,8 @@ function getHexString(array, startHex, endHex) {
   return valueStr;
 }
 
-function getAcreHex(array, startHex, endHex) {
-  const hex = getHex(array, startHex, endHex);
+function getAcreHex(array, start, end) {
+  const hex = getHex(array, start, end);
   
   if (hex.length / 2 != 70) {
     setMessage("The acre data for this save file is invalid.", "red");
