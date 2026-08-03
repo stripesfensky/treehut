@@ -1,5 +1,5 @@
-const bgdataURL = "https://raw.githubusercontent.com/ACreTeam/ac-decomp/refs/heads/master/src/data/field/bg/acre/bg_data.c";
-const combiURL = "https://raw.githubusercontent.com/ACreTeam/ac-decomp/master/src/data/combi/data_combi.c";
+const bgdataURL = "decomp/bg_data.c";
+const combiURL = "decomp/data_combi.c";
 
 let asyncFail;
 let asyncTrace;
@@ -66,7 +66,7 @@ async function treehut() {
 window.addEventListener("load", () => {
   let gci = document.getElementById("gci");
   let msg = document.getElementById("msg");
-  let maps = document.getElementById("maps");
+  let map = document.getElementById("map");
   let uploads;
   let uploadedFile;
   
@@ -82,7 +82,7 @@ window.addEventListener("load", () => {
     gciLoad(gciEvent);
   });
 
-  maps.addEventListener("click", (clickEvent) => {
+  map.addEventListener("click", (clickEvent) => {
     const acre = clickEvent.target.closest(".acre");
 
     if (acre != null) {
@@ -103,7 +103,7 @@ window.addEventListener("load", () => {
     }
   });
 
-  maps.addEventListener("contextmenu", (contextEvent) => {
+  map.addEventListener("contextmenu", (contextEvent) => {
       contextEvent.preventDefault();
   });
 
@@ -117,7 +117,7 @@ window.addEventListener("load", () => {
 
 function gciLoad(event) {
   const reader = new FileReader();
-  maps.innerHTML = "";
+  map.innerHTML = "";
   uploads = event.target.files;
   uploadedFile = uploads[0]
 
@@ -139,8 +139,6 @@ function gciLoad(event) {
     let acreSize = 0x8C;
     let townOffset = 0x137A8;
     let townSize = 0x3C00;
-    let islandOffset = 0x22554;
-    let islandSize = 0x400;
 
     switch(gafStr) {
       case "GAFJ01":
@@ -148,7 +146,6 @@ function gciLoad(event) {
         startOffset = 0x2040;
         acreOffset = 0x13EE8;
         townOffset = 0x102E8;
-        islandOffset = 0x1B450;
         break;
       case "GAEJ01":
         acStr = "Dōbutsu no Mori e+";
@@ -177,13 +174,7 @@ function gciLoad(event) {
 
     let startTownHex = startOffset + townOffset;
     let endTownHex = startTownHex + townSize;
-    getTownData(fileArray, startTownHex, endTownHex);
-
-    if (gafStr != "GAEJ01") {
-      let startIslandHex = startOffset + islandOffset;
-      let endIslandHex = startIslandHex + islandSize;
-      getIslandData(fileArray, startIslandHex, endIslandHex);
-    }
+    townData = getAcreItems(fileArray, startTownHex, endTownHex, 30);
   });
 }
 
@@ -233,15 +224,14 @@ function getAcreData(array, start, end, gafStr) {
   let ctItems = ctContent.match(/BG_TYPE_\w+/g);
 
   for (let i = 0; i < hex.length; i += 2) {
-    const acreFirst = hex[i].toString(16).padStart(2, "0").toUpperCase();
-    const acreSecond = hex[i + 1].toString(16).padStart(2, "0").toUpperCase();
-    acreHex[acreHexIdx] = "0x" + acreFirst + acreSecond;
+    acreHex[acreHexIdx] = getBytePairs(hex, i);
     acreHexIdx += 1;
   }
 
   let townGrid = document.createElement("div");
-  let islandGrid = document.createElement("div");
   let unknownTiles = new Array;
+
+  let townAcreIdx = 0;
 
   for (let i = 0; i < acreHex.length; i++) {
     let acre = document.createElement("div");
@@ -249,16 +239,11 @@ function getAcreData(array, start, end, gafStr) {
     let col = (i % 7) + 1;
     let skip = false;
     
-    if (row == 1 || row == 8 || row == 10 || (gafStr == "GAEJ01" && row == 9)){
+    if (row == 1 || row >= 8){
       skip = true;
     }
     else if (row >= 2 && row <= 7 && (col == 1 || col == 7)){
       skip = true;
-    }
-    else if (row == 9) {
-      if (col < 5 || col > 6) {
-        skip = true;
-      }
     }
 
     if (skip == false) {
@@ -271,7 +256,6 @@ function getAcreData(array, start, end, gafStr) {
       acre.setAttribute("data-acreid", acreHexBase);
       acre.setAttribute("data-arrayid", arrayIndex);
       acre.setAttribute("data-bgtype", ctName);
-      acre.setAttribute("data-island", "false");
       acre.setAttribute("data-edge", "none");
 
       const bgBlockMatch = bgdata.match(RegExp("(" + ctName + ")[\\s\\S]*?(\\{[\\s\\S]*?\\}\\s*,\\s*\\}\\s*,\\s*\\})\\s*(?=,)"));
@@ -289,39 +273,30 @@ function getAcreData(array, start, end, gafStr) {
           unknownTiles.push(bgAttribs[i]);
         }
 
-        tiles += "<rect x=\"" + tileX + "\" y=\"" + tileY + "\" width=\"1.05\" height=\"1.05\" fill=\"" + tileColor + "\"/>";
+        tiles += "<rect x=\"" + tileX + "\" y=\"" + tileY + "\" width=\"1.05\" height=\"1.05\" fill=\"" + tileColor + "\" data-tiletype=\"" + bgAttribs[i] + "\"/>";
       }
 
       tiles += "</svg>";
       acre.innerHTML = tiles;
 
-      if (gafStr != "GAEJ01" && row == 9) {
-        acre.setAttribute("data-island", "true");
-        islandGrid.append(acre);
+      if (col == 2) {
+        acre.setAttribute("data-edge", "left");
       }
-      else {
-        if (col == 2) {
-          acre.setAttribute("data-edge", "left");
-        }
-        else if (col == 6) {
-          acre.setAttribute("data-edge", "right");
-        }
-        townGrid.append(acre);
+      else if (col == 6) {
+        acre.setAttribute("data-edge", "right");
       }
+
+      acre.setAttribute("data-acre", String.fromCharCode(64 + (row - 1)) + (col - 1));
+      acre.setAttribute("data-townacre-idx", townAcreIdx);
+
+      townGrid.append(acre);
+      townAcreIdx += 1;
     }
   }
 
   townGrid.id = "towngrid";
-  maps.innerHTML = "<h2>Maps</h2>";
-  maps.innerHTML += "<p>Click on an acre to view it up close.</p>";
-  maps.innerHTML += "<h3>Town Map</h3>";
-  maps.appendChild(townGrid);
-
-  if (gafStr != "GAEJ01") {
-    islandGrid.id = "islandgrid";
-    maps.innerHTML += "<h3>Island Map (DnM+ / Animal Crossing)</h3>"
-    maps.appendChild(islandGrid);
-  }
+  map.innerHTML = "<h2>Town Map</h2>";
+  map.appendChild(townGrid);
 
   unknownTiles = Array.from(new Set(unknownTiles));
 
@@ -390,10 +365,33 @@ function getTileColor(bgType) {
   return "rgb(255, 255, 255)";
 }
 
-function getTownData(array, start, end) {
-  return;
+function getAcreItems(array, start, end, acres) {
+  const hex = getHex(array, start, end);
+  
+  if (hex.length / 2 / 256 != acres) {
+    setMessage("The acre item data is invalid.", "red");
+    return;
+  }
+
+  let acreArray = new Array(acres);
+  let hexIdx = 0;
+
+  for (let i = 0; i < acreArray.length; i++) {
+    let acre = new Array(256);
+
+    for (let j = 0; j < acre.length; j++) {
+      acre[j] = getBytePairs(hex, hexIdx);
+      hexIdx += 2;
+    }
+
+    acreArray[i] = acre;
+  }
+
+  return acreArray;
 }
 
-function getIslandData(array, start, end) {
-  return;
+function getBytePairs(hex, hexIdx) {
+  const firstByte = hex[hexIdx].toString(16).padStart(2, "0").toUpperCase();
+  const secondByte = hex[hexIdx + 1].toString(16).padStart(2, "0").toUpperCase();
+  return "0x" + firstByte + secondByte;
 }
