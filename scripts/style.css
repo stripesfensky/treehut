@@ -100,14 +100,15 @@ hr {
   flex: 1;
 }
 
-#maps {
+#map {
   flex: 1 0 auto;
 }
 
-#towngrid, #islandgrid {
+#towngrid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   max-width: 100%;
+  padding-top: 10px;
 }
 
 .acre {
