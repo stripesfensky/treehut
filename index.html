@@ -2,7 +2,6 @@
 <html lang="en">
   <head>
     <title>Animal Crossing Map Viewer</title>
-    <base href="https://www.plushypuppy.club/treehut/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="assets/tree.png">
@@ -18,13 +17,12 @@
     <div id="main">
       <h1>Animal Crossing Map Viewer</h1>
       <p>
-        The purpose of this tool is to view your town and island acres up close to
-        see where trees are able to grow. Island acres will only be visible for 
-        <u>Dōbutsu no Mori+</u> and <u>Animal Crossing</u> save data at this time.
+        The purpose of this tool is to view your town acres up close to
+        see where trees are able to grow.
       </p>
       <hr />
       <h3 id="asyncwait">
-        Loading decomp source files from GitHub...
+        Loading decomp source files...
       </h3>
       <span id="asyncfail">
         <h2>Loading Error</h2>
@@ -36,14 +34,14 @@
       </span>
       <form id="upload">
         <h2>Upload Save</h2>
-        <p>Upload your <u>Dōbutsu no Mori(+/e+)</u> or <u>Animal Crossing</u> save file in the .GCI format.
+        <p>Upload your <u>Doubutsu no Mori(+/e+)</u> or <u>Animal Crossing</u> save file in the .GCI format.
           Your save data is never sent to a server! Data is only stored in browser memory.
         </p>
         <input type="file" id="gci" name="gci" accept=".gci">
       </form>
       <span id="msg"></span><br />
     </div>
-    <div id="maps"></div>
+    <div id="map"></div>
     <div id="credits">
       <h2>Credits</h2>
       <ul>
