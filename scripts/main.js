@@ -1,8 +1,8 @@
 import * as hexTools from "./inc/hexTools.js";
 import * as fieldTools from "./inc/fieldTools.js"
 
-const bgdataURL = "./decomp/bg_data.c";
-const combiURL = "./decomp/data_combi.c";
+const bgdataURL = "./source/bg_data.c";
+const combiURL = "./source/data_combi.c";
 
 const asyncWait = document.getElementById("asyncwait");
 const asyncFail = document.getElementById("asyncfail");
