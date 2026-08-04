@@ -5,33 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="assets/tree.png">
-    <style>
-      #asyncwait, #asyncfail, #upload {
-        display: none;
-        opacity: 0;
-      }
-    </style>
     <link rel="stylesheet" type="text/css" href="scripts/style.css">
+    <script src="scripts/main.js" type="module"></script>
   </head>
   <body>
     <div id="main">
       <h1>Animal Crossing Map Viewer</h1>
       <p>
-        The purpose of this tool is to view your town acres up close to
-        see where trees are able to grow.
+        The purpose of this map viewer is to see where trees can grow in your town.
+      </p>
+      <p>
+        The map viewer can reveal which tiles in an acre are good to grow, taking objects 
+        such as existing trees, rocks, villager houses, or other structures into consideration.
       </p>
       <hr />
-      <h3 id="asyncwait">
-        Loading decomp source files...
-      </h3>
-      <span id="asyncfail">
-        <h2>Loading Error</h2>
-        <h3>
-          Sorry, the decomp source files are unreachable.<br />
-          Please try again later.
-        </h3>
-        <p id="asynctrace"></p>
-      </span>
       <form id="upload">
         <h2>Upload Save</h2>
         <p>Upload your <u>Doubutsu no Mori(+/e+)</u> or <u>Animal Crossing</u> save file in the .GCI format.
@@ -39,7 +26,7 @@
         </p>
         <input type="file" id="gci" name="gci" accept=".gci">
       </form>
-      <span id="msg"></span><br />
+      <p id="msg"></p><br />
     </div>
     <div id="map"></div>
     <div id="credits">
@@ -62,6 +49,5 @@
       </ul>
       <p>Licensed under <a href="LICENSE">GNU GLPv3.</a> Made by <a href="https://github.com/StripesFensky">Stripes</a>.</p>
     </div>
-    <script src="scripts/main.js" type="module"></script>
   </body>
 </html>
