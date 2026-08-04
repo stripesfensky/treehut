@@ -5,13 +5,15 @@ function setMessage(message, color) {
   msg.style.color = color;
 }
 
+let gci = document.getElementById("gci");
+let map = document.getElementById("map");
+let upload = document.getElementById("upload");
+
+upload.reset();
+
 let fieldInfoStore = await fieldInfo.getFieldInfo();
 
 if (fieldInfoStore != null) {
-  let upload = document.getElementById("upload");
-  upload.reset();
-  
-  let gci = document.getElementById("gci");
   gci.style.display = "block";
 }
 else {
