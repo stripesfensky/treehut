@@ -1,12 +1,22 @@
-const bgdataURL = "decomp/bg_data.c";
-const combiURL = "decomp/data_combi.c";
+import * as hexTools from "./inc/hextools.js"
 
-let asyncFail;
-let asyncTrace;
-let asyncWait;
+const bgdataURL = "./decomp/bg_data.c";
+const combiURL = "./decomp/data_combi.c";
+
+const asyncWait = document.getElementById("asyncwait");
+const asyncFail = document.getElementById("asyncfail");
+const asyncTrace = document.getElementById("asynctrace");
+const uploadForm = document.getElementById("upload");
+const gci = document.getElementById("gci");
+const msg = document.getElementById("msg");
+const map = document.getElementById("map");
+
 let bgdata;
 let combi;
-let uploadForm;
+let uploads;
+let uploadedFile;
+let townData;
+let islandData;
 
 async function getDecompSource(url) {
   console.log("Loading from URL \"" + url + "\"");
@@ -63,57 +73,42 @@ async function treehut() {
   }
 }
 
-window.addEventListener("load", () => {
-  let gci = document.getElementById("gci");
-  let msg = document.getElementById("msg");
-  let map = document.getElementById("map");
-  let uploads;
-  let uploadedFile;
-  
-  let townData;
-  let islandData;
-
-  asyncWait = document.getElementById("asyncwait");
-  asyncFail = document.getElementById("asyncfail");
-  asyncTrace = document.getElementById("asynctrace");
-  uploadForm = document.getElementById("upload");
-
-  gci.addEventListener("change", (gciEvent) => {
-    gciLoad(gciEvent);
-  });
-
-  map.addEventListener("click", (clickEvent) => {
-    const acre = clickEvent.target.closest(".acre");
-
-    if (acre != null) {
-      clickEvent.preventDefault();
-      const acreID = acre.getAttribute("data-acreid");
-      const arrayID = acre.getAttribute("data-arrayid");
-      const bgType = acre.getAttribute("data-bgtype");
-
-      if (bgType != null) {
-        navigator.clipboard.writeText(bgType);
-        console.log("Copied to clipboard: " + bgType + " (" + acreID + ", " + arrayID + ")");
-        acre.classList.add("selected");
-
-        setTimeout(() => {
-          acre.classList.remove("selected");
-        }, 250);
-      }
-    }
-  });
-
-  map.addEventListener("contextmenu", (contextEvent) => {
-      contextEvent.preventDefault();
-  });
-
-  setTimeout(() => {
-    asyncWait.classList.add("asyncvisible");
-    setTimeout(() => {
-      treehut();
-    }, 1000);
-  }, 250);
+gci.addEventListener("change", (gciEvent) => {
+  gciLoad(gciEvent);
 });
+
+map.addEventListener("click", (clickEvent) => {
+  const acre = clickEvent.target.closest(".acre");
+
+  if (acre != null) {
+    clickEvent.preventDefault();
+    const acreID = acre.getAttribute("data-acreid");
+    const arrayID = acre.getAttribute("data-arrayid");
+    const bgType = acre.getAttribute("data-bgtype");
+
+    if (bgType != null) {
+      navigator.clipboard.writeText(bgType);
+      console.log("Copied to clipboard: " + bgType + " (" + acreID + ", " + arrayID + ")");
+      acre.classList.add("selected");
+
+      setTimeout(() => {
+        acre.classList.remove("selected");
+      }, 250);
+    }
+  }
+});
+
+map.addEventListener("contextmenu", (contextEvent) => {
+    contextEvent.preventDefault();
+});
+
+setTimeout(() => {
+  asyncWait.classList.add("asyncvisible");
+  setTimeout(() => {
+    treehut();
+  }, 1000);
+}, 250);
+
 
 function gciLoad(event) {
   const reader = new FileReader();
@@ -127,10 +122,10 @@ function gciLoad(event) {
     const fileBuffer = loadEvent.target.result;
     const fileArray = new Uint8Array(fileBuffer);
 
-    const gafStr = getHexString(fileArray, 0x00, 0x06);
+    const gafStr = hexTools.getHexString(fileArray, 0x00, 0x06);
     const gafTest = /GA[EF][EJPU]01/.test(gafStr);
 
-    const muraStr = getHexString(fileArray, 0x08, 0x1B);
+    const muraStr = hexTools.getHexString(fileArray, 0x08, 0x1B);
     const muraTest = /Dobutsunomori[PE]_MURA/.test(muraStr);
     
     let acStr = "Animal Crossing (USA)";
@@ -183,32 +178,8 @@ function setMessage(message, color) {
   msg.style.color = color;
 }
 
-function getHex(array, start, end) {
-  const sliced = array.slice(start, end);
-  let hexArray = new Array();
-
-  for (let i = 0; i < sliced.length; i++) {
-    const hex = sliced[i].toString(16).padStart(2, "0").toUpperCase();
-    hexArray.push(hex);
-  }
-
-  return hexArray;
-}
-
-function getHexString(array, start, end) {
-  const hex = getHex(array, start, end);
-  let valueStr = "";
-
-  for (let i = 0; i < hex.length; i++) {
-    const strChar = String.fromCharCode(parseInt(hex[i], 16));
-    valueStr += strChar;
-  }
-  
-  return valueStr;
-}
-
 function getAcreData(array, start, end, gafStr) {
-  const hex = getHex(array, start, end);
+  const hex = hexTools.getHex(array, start, end);
   
   if (hex.length / 2 != 70) {
     setMessage("The acre data for this save file is invalid.", "red");
@@ -224,7 +195,7 @@ function getAcreData(array, start, end, gafStr) {
   let ctItems = ctContent.match(/BG_TYPE_\w+/g);
 
   for (let i = 0; i < hex.length; i += 2) {
-    acreHex[acreHexIdx] = getBytePairs(hex, i);
+    acreHex[acreHexIdx] = hexTools.getBytePairs(hex, i);
     acreHexIdx += 1;
   }
 
@@ -366,7 +337,7 @@ function getTileColor(bgType) {
 }
 
 function getAcreItems(array, start, end, acres) {
-  const hex = getHex(array, start, end);
+  const hex = hexTools.getHex(array, start, end);
   
   if (hex.length / 2 / 256 != acres) {
     setMessage("The acre item data is invalid.", "red");
@@ -380,7 +351,7 @@ function getAcreItems(array, start, end, acres) {
     let acre = new Array(256);
 
     for (let j = 0; j < acre.length; j++) {
-      acre[j] = getBytePairs(hex, hexIdx);
+      acre[j] = hexTools.getBytePairs(hex, hexIdx);
       hexIdx += 2;
     }
 
@@ -388,10 +359,4 @@ function getAcreItems(array, start, end, acres) {
   }
 
   return acreArray;
-}
-
-function getBytePairs(hex, hexIdx) {
-  const firstByte = hex[hexIdx].toString(16).padStart(2, "0").toUpperCase();
-  const secondByte = hex[hexIdx + 1].toString(16).padStart(2, "0").toUpperCase();
-  return "0x" + firstByte + secondByte;
 }
