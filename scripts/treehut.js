@@ -1,4 +1,5 @@
-import * as hexTools from "./inc/hextools.js"
+import * as hexTools from "./inc/hexTools.js";
+import * as fieldTools from "./inc/fieldTools.js"
 
 const bgdataURL = "./decomp/bg_data.c";
 const combiURL = "./decomp/data_combi.c";
@@ -238,7 +239,7 @@ function getAcreData(array, start, end, gafStr) {
       for (let i = 0; i < bgAttribs.length; i++) {
         const tileX = i % 16;
         const tileY = Math.floor(i / 16);
-        const tileColor = getTileColor(bgAttribs[i]);
+        const tileColor = fieldTools.getTileColor(bgAttribs[i]);
         
         if (tileColor == "rgb(230, 50, 230)") {
           unknownTiles.push(bgAttribs[i]);
@@ -277,63 +278,6 @@ function getAcreData(array, start, end, gafStr) {
       console.log("Unknown tile type: " + unknownTiles[i]);
     }
   }
-}
-
-const tileColorRules = [
-  {
-    match: /BUSH/,
-    color: "rgb(47, 106, 59)"
-  },
-  {
-    match: /GRASS/,
-    color: "rgb(39, 160, 93)"
-  },
-  {
-    match: /RIVER|WATER(?!FALL)/,
-    color: "rgb(60, 87, 189)"
-  },
-  {
-    match: /SAND/,
-    color: "rgb(209, 191, 151)"
-  },
-  {
-    match: /SEA/,
-    color: "rgb(35, 64, 173)"
-  },
-  {
-    match: /SOIL|_(63)/,
-    color: "rgb(202, 195, 103)"
-  },
-  {
-    match: /STONE|_(3[2-5])/,
-    color: "rgb(141, 186, 204)"
-  },
-  {
-    match: /WATERFALL/,
-    color: "rgb(129, 178, 244)"
-  },
-  {
-    match: /WOOD|_(2[7-9]|3[01])/,
-    color: "rgb(172, 121, 102)"
-  },
-  {
-    match: /_(2[56]|3[6-8])/, // WAVES
-    color: "rgb(77, 122, 208)"
-  },
-  {
-    match: /_(39|4[0-9]|5[0-9]|6[0-2])/, // RIVER BANKS & CLIFFS
-    color: "rgb(107, 75, 95)"
-  }
-];
-
-function getTileColor(bgType) {
-  for (const rule of tileColorRules) {
-    if (rule.match.test(bgType)) {
-      return rule.color;
-    }
-  }
-
-  return "rgb(255, 255, 255)";
 }
 
 function getAcreItems(array, start, end, acres) {
