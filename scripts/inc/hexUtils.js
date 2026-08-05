@@ -1,4 +1,4 @@
-export function getHex(array, start, end) {
+export function getHexSlice(array, start, end) {
   const sliced = array.slice(start, end);
   let hexArray = new Array();
 
@@ -11,7 +11,7 @@ export function getHex(array, start, end) {
 }
 
 export function getHexString(array, start, end) {
-  const hex = getHex(array, start, end);
+  const hex = getHexSlice(array, start, end);
   let valueStr = "";
 
   for (let i = 0; i < hex.length; i++) {
@@ -22,8 +22,9 @@ export function getHexString(array, start, end) {
   return valueStr;
 }
 
-export function getBytePairs(hex, hexIdx) {
-  const firstByte = hex[hexIdx].toString(16).padStart(2, "0").toUpperCase();
-  const secondByte = hex[hexIdx + 1].toString(16).padStart(2, "0").toUpperCase();
+export function getBytePairs(hexSlice, hexSliceIdx) {
+  const firstByte = hexSlice[hexSliceIdx].toString(16).padStart(2, "0").toUpperCase();
+  const secondByte = hexSlice[hexSliceIdx + 1].toString(16).padStart(2, "0").toUpperCase();
+  
   return "0x" + firstByte + secondByte;
 }
