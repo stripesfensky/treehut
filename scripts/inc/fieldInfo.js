@@ -6,6 +6,11 @@ export async function getFieldInfo() {
   const backgroundTiles = new Array();
 
   const bg = await importUtils.returnSource("./source/bg_data.c");
+  
+  if (bg === undefined) {
+    return;
+  }
+
   const bgMatched = bg.match(/extern\smFM_bg_data_c\sdata_bgd\[]\s=\s{[\s\S]+?\n};/);
 
   if (bgMatched == null) {
@@ -13,6 +18,11 @@ export async function getFieldInfo() {
   }
 
   const tile = await importUtils.returnSource("./source/m_collision_bg.h");
+
+  if (tile === undefined) {
+    return;
+  }
+  
   const tileMatched = tile.match(/enum\s*background_attribute\s*{\s*([\s\S]*?)\s*\};/);
 
   if (tileMatched == null) {
