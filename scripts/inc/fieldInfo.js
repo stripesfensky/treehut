@@ -50,9 +50,17 @@ export async function getFieldInfo() {
 
   for (const match of bgMatches) {
     const name = match[1];
-    const index = combiMatches.indexOf(name);
     const matchTiles = match[2].match(/mCoBG_ATTRIBUTE_\w+/g).map(collision => backgroundTileMap.get(collision));
-    backgroundTypes.push(new fieldUtils.BackgroundType(name, index, matchTiles));
+
+    let indices = [];
+    
+    for (let i = 0; i < combiMatches.length; i++) {
+      if (name == combiMatches[i]) {
+        indices.push(i);
+      }
+    }
+
+    backgroundTypes.push(new fieldUtils.BackgroundType(name, indices, matchTiles));
   }
 
   return backgroundTypes;
