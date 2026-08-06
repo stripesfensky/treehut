@@ -61,12 +61,13 @@ function getAcreData(array, start, end) {
 
   let acres = new Array(70);
   let acresIndex = 0;
-  
+
   for (let i = 0; i < sliced.length; i += 2) {
     let acre = hexUtils.getBytePairs(sliced, i);
     let acreStrId = acre.toString(16);
     let acreIntId = hexUtils.getBytePairs(sliced, i) >> 2;
-    let acreFieldInfo = fieldInfoStore.find(fi => fi.index == acreIntId);
+    let acreFieldInfo = fieldInfoStore.find(fi => fi.indices.includes(acreIntId));
+
     acres[acresIndex] = acreFieldInfo;
     acresIndex += 1;
   }
