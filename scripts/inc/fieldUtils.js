@@ -66,12 +66,12 @@ export class BackgroundTile {
 
 export class BackgroundType {
   name = "BGTYPE";
-  index = -1;
+  indices = [];
   backgroundTiles = new Array(256);
 
-  constructor(name, index, backgroundTiles) {
+  constructor(name, indices, backgroundTiles) {
     this.name = name;
-    this.index = index;
+    this.indices = indices;
     this.backgroundTiles = backgroundTiles;
   }
 }
