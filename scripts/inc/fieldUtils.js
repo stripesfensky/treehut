@@ -1,15 +1,15 @@
 export const tileColors = [
   {
     match: /BUSH/,
-    color: "rgb(47, 106, 59)"
+    color: "rgb(27, 92, 52)"
   },
   {
     match: /GRASS/,
-    color: "rgb(39, 160, 93)"
+    color: "rgb(43, 143, 81)"
   },
   {
     match: /RIVER|WATER(?!FALL)/,
-    color: "rgb(60, 87, 189)"
+    color: "rgb(65, 87, 165)"
   },
   {
     match: /SAND/,
@@ -17,31 +17,31 @@ export const tileColors = [
   },
   {
     match: /SEA/,
-    color: "rgb(35, 64, 173)"
+    color: "rgb(45, 65, 136)"
   },
   {
     match: /SOIL|_(63)/,
-    color: "rgb(202, 195, 103)"
+    color: "rgb(189, 182, 96)"
   },
   {
     match: /STONE|_(3[2-5])/,
-    color: "rgb(141, 186, 204)"
+    color: "rgb(126, 166, 182)"
   },
   {
     match: /WATERFALL/,
-    color: "rgb(129, 178, 244)"
+    color: "rgb(106, 159, 228)"
   },
   {
     match: /WOOD|_(2[7-9]|3[01])/,
-    color: "rgb(172, 121, 102)"
+    color: "rgb(156, 82, 82)"
   },
   {
     match: /_(2[56]|3[6-8])/, // WAVES
-    color: "rgb(77, 122, 208)"
+    color: "rgb(83, 107, 196)"
   },
   {
     match: /_(39|4[0-9]|5[0-9]|6[0-2])/, // RIVER BANKS & CLIFFS
-    color: "rgb(107, 75, 95)"
+    color: "rgb(94, 66, 84)"
   }
 ];
 
