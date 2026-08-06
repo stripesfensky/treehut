@@ -93,7 +93,7 @@ function getAcreData(array, start, end) {
 
       acre.className = "acre";
       acre.setAttribute("data-location", String.fromCharCode(64 + (row - 1)) + (col - 1));
-      acre.setAttribute("data-fieldinfoindex", acreFieldInfo.index);
+      acre.setAttribute("data-fieldinfo", acreFieldInfo.name);
       acre.setAttribute("data-edge", "none");
 
       let tiles = "<svg viewBox=\"0 0 16 16\" width=\"100%\" height=\"100%\">";
