@@ -11,11 +11,11 @@ export function getHexSlice(array, start, end) {
 }
 
 export function getHexString(array, start, end) {
-  const hex = getHexSlice(array, start, end);
+  const sliced = getHexSlice(array, start, end);
   let valueStr = "";
 
-  for (let i = 0; i < hex.length; i++) {
-    const strChar = String.fromCharCode(parseInt(hex[i], 16));
+  for (let i = 0; i < sliced.length; i++) {
+    const strChar = String.fromCharCode(parseInt(sliced[i], 16));
     valueStr += strChar;
   }
   
