@@ -38,7 +38,7 @@ export async function loadGci(gciUpload) {
       case "GADEXX":
         gameStr = "Animal Crossing Deluxe v41.0+";
         gciSaveOffset = 0x10040;
-        saveAcreOffset = 0x173A0;
+        saveAcreOffset = 0x173A8;
         break;
     }
 
