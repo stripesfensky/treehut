@@ -55,5 +55,5 @@ export async function getFieldInfo() {
     backgroundTypes.push(new fieldUtils.BackgroundType(name, index, matchTiles));
   }
 
-  return [backgroundTypes];
+  return backgroundTypes;
 }
