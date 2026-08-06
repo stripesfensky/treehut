@@ -8,7 +8,7 @@ export async function loadGci(gciUpload) {
 
   let gciData;
 
-  if (/GA[EF][EJPU]01/.test(gciGameCode) && /Dobutsunomori[PE]_MURA/.test(gciFileName)) {
+  if (/GA[DEF][EJPU][0X][1X]/.test(gciGameCode) && /Dobutsunomori[PE]_MURA/.test(gciFileName)) {
     let gameStr = "Animal Crossing (USA)";
     let gciSaveOffset = 0x26040;
     let saveAcreOffset = 0x173A8;
@@ -35,9 +35,12 @@ export async function loadGci(gciUpload) {
       case "GAFU01":
         gameStr = "Animal Crossing (AUS)";
         break;
+      case "GADEXX":
+        gameStr = "Animal Crossing Deluxe v41.0+";
+        break;
     }
 
-    gciData = [gameStr, gciGameCode, gciFileName, gciSaveOffset, saveAcreOffset, saveAcreSize, saveTownOffset, saveTownSize];
+    gciData = [gameStr, gciGameCode, gciFileName, gciSaveOffset, saveAcreOffset, saveAcreSize, saveTownOffset, saveTownSize, gciUint8Array];
   }
 
   return gciData;
