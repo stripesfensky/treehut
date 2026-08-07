@@ -1,127 +1,96 @@
-import * as fieldInfo from "./inc/fieldInfo.js";
-import * as fieldUtils from "./inc/fieldUtils.js";
-import * as gciUtils from "./inc/gciUtils.js";
-import * as hexUtils from "./inc/hexUtils.js";
+import * as common from "./inc/common.js";
+import * as field from "./inc/field.js";
+import * as gciSave from "./inc/gcisave.js";
 
-let upload = document.getElementById("upload");
+let fieldInfo = await getFieldInfo();
 let gci = document.getElementById("gci");
-let msg = document.getElementById("msg");
 let map = document.getElementById("map");
+let upload = document.getElementById("upload");
 
-upload.reset();
-
-let fieldInfoStore = await fieldInfo.getFieldInfo();
-
-if (fieldInfoStore != null) {
+if (fieldInfo != null) {
+  upload.reset();
   gci.style.display = "block";
 }
 else {
-  setMessage(msg, "<b>ERROR:</b> There was an error loading the source data; please try again another time.", "red");
+  common.setMessage("<b>ERROR:</b> There was an error loading the source data; please try again another time.", "red");
 }
 
 gci.addEventListener("change", async (gciUpload) => {
   map.innerHTML = "";
-  msg.innerHTML = "";
-
-  let gciData = await gciUtils.loadGci(gciUpload);
-  
-  if(gciData != null){
-    setMessage(msg, "<b>SUCCESS:</b> This file is valid. [" + gciData[0] + " / " + gciData[1] + ", " + gciData[2] + "]", "green");
-    getAcreData(gciData[8], gciData[3] + gciData[4], gciData[3] + gciData[4] + gciData[5]);
+  common.setMessage("", "");
+  let saveData = await gciSave.loadGci(fieldInfo, gciUpload);
+  if (saveData != null) {
+    let townGrid = document.createElement("div");
+    for (let i = 0; i < saveData.length; i++){
+      townGrid.append(saveData[i].svg());
+    }
+    townGrid.id = "towngrid";
+    map.innerHTML = "<hr /><h2>Town Map</h2>";
+    map.appendChild(townGrid);
   }
   else {
-    setMessage(msg, "<b>ERROR:</b> This file is invalid.", "red");
+    common.setMessage("<b>ERROR:</b> There was an unknown error that occurred when parsing the save data.", "red");
   }
 });
 
-map.addEventListener("contextmenu", (mapContextMenu) => {
-  mapContextMenu.preventDefault();
+map.addEventListener("click", (towngrid) => {
+  if (map.innerHTML != ""){
+    const selectedAcre = towngrid.target.closest(".acre");
+    if (selectedAcre != null) {
+      selectedAcre.classList.add("selected");
+      setTimeout(() => {
+        selectedAcre.classList.remove("selected");
+      }, 250);
+    }
+  }
 });
 
-map.addEventListener("click", (acreSelect) => {
-  const selectedAcre = acreSelect.target.closest(".acre");
-  selectedAcre.classList.add("selected");
-  setTimeout(() => {
-    selectedAcre.classList.remove("selected");
-  }, 250);
-});
-
-function setMessage(msg, message, color) {
-  msg.innerHTML = message;
-  msg.style.color = color;
+async function getSource(url, regex) {
+  const response = await fetch(url);
+  if (response.status != 200) {
+    console.error("Could not import \"" + url + "\" (status code: " + response.status + ")");
+  } 
+  else {
+    console.info("Successfully imported \"" + url + "\"");
+    const match = (await response.text()).match(regex);
+    return match;
+  }
 }
 
-function getAcreData(array, start, end) {
-  const sliced = hexUtils.getHexSlice(array, start, end);
-  
-  if (sliced.length / 2 != 70) {
-    setMessage(msg, "The acre data for this save file is invalid.", "red");
-    return;
+async function getFieldInfo() {
+  const backgroundTypes = new Array();
+  const backgroundTiles = new Array();
+
+  const bgData = await getSource("./source/bg_data.c", /extern\smFM_bg_data_c\sdata_bgd\[]\s=\s{[\s\S]+?\n};/);
+  const tileData = await getSource("./source/m_collision_bg.h", /enum\s*background_attribute\s*{\s*([\s\S]*?)\s*\};/);
+  const combiData = await getSource("./source/data_combi.c", /data_combi_table\s*\[\s*\]\s*=\s*\{\s*([\s\S]*?)\s*\};/);
+
+  const bgMatches = [...bgData[0].matchAll(/{\s*(BG_TYPE_\w+)[\s\S]*?\/\/ collision data\s*{([\s\S]*?)}\s*,\s*\/\/\s*sound/g)];
+  const tileMatches = tileData[0].match(/mCoBG_ATTRIBUTE\w+/g);
+
+  for (const match of tileMatches) {
+    const type = match;
+    backgroundTiles.push(new field.BackgroundTile(type));
   }
 
-  let acres = new Array(70);
-  let acresIndex = 0;
+  const backgroundTileMap = new Map(backgroundTiles.map(tile => [tile.type, tile]));
 
-  for (let i = 0; i < sliced.length; i += 2) {
-    let acre = hexUtils.getBytePairs(sliced, i);
-    let acreStrId = acre.toString(16);
-    let acreIntId = hexUtils.getBytePairs(sliced, i) >> 2;
-    let acreFieldInfo = fieldInfoStore.find(fi => fi.indices.includes(acreIntId));
+  const combiMatches = combiData[0].match(/BG_TYPE_\w+/g);
 
-    acres[acresIndex] = acreFieldInfo;
-    acresIndex += 1;
-  }
+  for (const match of bgMatches) {
+    const name = match[1];
+    const matchTiles = match[2].match(/mCoBG_ATTRIBUTE_\w+/g).map(collision => backgroundTileMap.get(collision));
 
-  let townGrid = document.createElement("div");
-  let townAcresIndex = 0;
-
-  for (let i = 0; i < acres.length; i++) {
-    let acre = document.createElement("div");
-    let row = Math.floor(i / 7) + 1;
-    let col = (i % 7) + 1;
-    let skip = false;
+    let indices = [];
     
-    if (row == 1 || row >= 8){
-      skip = true;
-    }
-    else if (row >= 2 && row <= 7 && (col == 1 || col == 7)){
-      skip = true;
-    }
-
-    if (skip == false) {
-      let acreFieldInfo = acres[i];
-
-      acre.className = "acre";
-      acre.setAttribute("data-location", String.fromCharCode(64 + (row - 1)) + (col - 1));
-      acre.setAttribute("data-fieldinfo", acreFieldInfo.name);
-      acre.setAttribute("data-edge", "none");
-
-      let tiles = "<svg viewBox=\"0 0 16 16\" width=\"100%\" height=\"100%\">";
-
-      for (let i = 0; i < acreFieldInfo.backgroundTiles.length; i++) {
-        const tileX = i % 16;
-        const tileY = Math.floor(i / 16);
-        const tileColor = acreFieldInfo.backgroundTiles[i].color;
-        
-        tiles += "<rect x=\"" + tileX + "\" y=\"" + tileY + "\" width=\"1.05\" height=\"1.05\" fill=\"" + tileColor + "\"/>";
+    for (let i = 0; i < combiMatches.length; i++) {
+      if (name == combiMatches[i]) {
+        indices.push(i);
       }
-
-      tiles += "</svg>";
-      acre.innerHTML = tiles;
-
-      if (col == 2) {
-        acre.setAttribute("data-edge", "left");
-      }
-      else if (col == 6) {
-        acre.setAttribute("data-edge", "right");
-      }
-
-      townGrid.append(acre);
-      townAcresIndex += 1;
     }
+
+    backgroundTypes.push(new field.BackgroundType(name, indices, matchTiles));
   }
 
-  townGrid.id = "towngrid";
-  map.innerHTML = "<hr /><h2>Town Map</h2>";
-  map.appendChild(townGrid);
+  return backgroundTypes;
 }
