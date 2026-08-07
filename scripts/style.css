@@ -84,25 +84,30 @@ a:hover {
 
 .acre {
   aspect-ratio: 1 / 1;
-  min-width: 0;
-  shape-rendering: crispEdges;
-  transition: opacity 0.5s;
-  width: 100%;
-}
-
-.acre:hover, .acre:active, .acre:focus {
   cursor: pointer;
-  outline: 5px solid rgb(255, 91, 220);
-  outline-offset: -5px;
-}
-
-.acre.selected {
-  opacity: 0.25;
+  min-width: 0;
+  position: relative;
+  shape-rendering: crispEdges;
+  width: 100%;
 }
 
 .acre svg {
   display: block;
   height: 100%;
   shape-rendering: crispEdges;
+  transition: opacity 0.1s;
   width: 100%;
+}
+
+.acre:hover::after,
+.acre:focus-visible::after {
+  border: 5px solid rgb(255, 91, 220);
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.acre:hover:active svg {
+  opacity: 0.25;
 }
