@@ -1,6 +1,6 @@
 import * as common from "./inc/common.js";
 import * as field from "./inc/field.js";
-import * as gciSave from "./inc/gcisave.js";
+import * as save from "./inc/save.js";
 
 let fieldInfo = await getFieldInfo();
 let gci = document.getElementById("gci");
@@ -18,7 +18,7 @@ else {
 gci.addEventListener("change", async (gciUpload) => {
   map.innerHTML = "";
   common.setMessage("", "");
-  let saveData = await gciSave.loadGci(fieldInfo, gciUpload);
+  let saveData = await save.loadSave(fieldInfo, gciUpload);
   if (saveData != null) {
     let townGrid = document.createElement("div");
     for (let i = 0; i < saveData.length; i++){
