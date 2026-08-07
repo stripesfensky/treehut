@@ -6,6 +6,7 @@ let fieldInfo = await getFieldInfo();
 let gci = document.getElementById("gci");
 let map = document.getElementById("map");
 let upload = document.getElementById("upload");
+let saveData;
 
 if (fieldInfo != null) {
   upload.reset();
@@ -18,7 +19,7 @@ else {
 gci.addEventListener("change", async (gciUpload) => {
   map.innerHTML = "";
   common.setMessage("", "");
-  let saveData = await save.loadSave(fieldInfo, gciUpload);
+  saveData = await save.loadSave(fieldInfo, gciUpload);
   if (saveData != null) {
     let townGrid = document.createElement("div");
     for (let i = 0; i < saveData.length; i++){
@@ -30,18 +31,6 @@ gci.addEventListener("change", async (gciUpload) => {
   }
   else {
     common.setMessage("<b>ERROR:</b> There was an unknown error that occurred when parsing the save data.", "red");
-  }
-});
-
-map.addEventListener("click", (towngrid) => {
-  if (map.innerHTML != ""){
-    const selectedAcre = towngrid.target.closest(".acre");
-    if (selectedAcre != null) {
-      selectedAcre.classList.add("selected");
-      setTimeout(() => {
-        selectedAcre.classList.remove("selected");
-      }, 250);
-    }
   }
 });
 
