@@ -1,6 +1,6 @@
-import * as common from "./inc/common.js";
-import * as field from "./inc/field.js";
-import * as save from "./inc/save.js";
+import * as common from "./common.js";
+import * as field from "./field.js";
+import * as save from "./save.js";
 
 let fieldInfo = await getFieldInfo();
 let gci = document.getElementById("gci");
@@ -47,12 +47,16 @@ async function getSource(url, regex) {
 }
 
 async function getFieldInfo() {
-  const backgroundTypes = new Array();
-  const backgroundTiles = new Array();
+  const backgroundTypes = [];
+  const backgroundTiles = [];
 
   const bgData = await getSource("./source/bg_data.c", /extern\smFM_bg_data_c\sdata_bgd\[]\s=\s{[\s\S]+?\n};/);
   const tileData = await getSource("./source/m_collision_bg.h", /enum\s*background_attribute\s*{\s*([\s\S]*?)\s*\};/);
   const combiData = await getSource("./source/data_combi.c", /data_combi_table\s*\[\s*\]\s*=\s*\{\s*([\s\S]*?)\s*\};/);
+
+  if (bgData == null || tileData == null || combiData == null) {
+    return;
+  }
 
   const bgMatches = [...bgData[0].matchAll(/{\s*(BG_TYPE_\w+)[\s\S]*?\/\/ collision data\s*{([\s\S]*?)}\s*,\s*\/\/\s*sound/g)];
   const tileMatches = tileData[0].match(/mCoBG_ATTRIBUTE\w+/g);
