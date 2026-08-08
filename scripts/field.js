@@ -66,19 +66,21 @@ export class Acre {
       div.setAttribute("data-edge", this.edge);
     }
 
-    let svgHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">`;
+    const canvas = document.createElement("canvas");
+    canvas.width = 16;
+    canvas.height = 16;
+
+    const canvasCtx = canvas.getContext("2d");
 
     for (let i = 0; i < this.backgroundType.backgroundTiles.length; i++) {
       const x = i % 16;
       const y = Math.floor(i / 16);
-      const fill = this.backgroundType.backgroundTiles[i].color;
 
-      svgHTML += `<rect x="${x}" y="${y}" width="1" height="1" fill="${fill}"/>`;    
+      canvasCtx.fillStyle = this.backgroundType.backgroundTiles[i].color;
+      canvasCtx.fillRect(x, y, 1, 1);
     }
 
-    svgHTML += "</svg>";
-
-    div.style.backgroundImage = `url("data:image/svg+xml,${encodeURIComponent(svgHTML.trim())}")`;
+    div.style.backgroundImage = `url("${canvas.toDataURL("image/png")}")`;
 
     return div;
   }
