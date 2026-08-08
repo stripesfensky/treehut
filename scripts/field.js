@@ -57,10 +57,10 @@ export class Acre {
   }
 
   canvas() {
-    const div = document.createElement("div");
+    const acre = document.createElement("div");
 
-    div.className = "acre";
-    div.setAttribute("id", this.name);
+    acre.className = "acre";
+    acre.setAttribute("id", this.name);
 
     const canvas = document.createElement("canvas");
     canvas.width = 16;
@@ -76,8 +76,8 @@ export class Acre {
       canvasCtx.fillRect(x, y, 1, 1);
     }
 
-    div.style.backgroundImage = `url("${canvas.toDataURL("image/png")}")`;
+    acre.style.backgroundImage = `url("${canvas.toDataURL("image/png")}")`;
 
-    return div;
+    return acre;
   }
 }
