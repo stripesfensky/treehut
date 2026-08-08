@@ -103,7 +103,7 @@ export class Acre {
 
       const acreGridTile = document.createElement("div");
       acreGridTile.className = "tile";
-      acreGridTile.title = `Row ${y}, Column ${x}: ${backgroundType} / ${foregroundTile})`
+      acreGridTile.title = `Row ${y}, Column ${x}: ${backgroundType} / ${foregroundTile}`
 
       if (backgroundType.match(/.+(GRASS|SOIL)0$/) && ((edge == "left" && x != 0) || (edge == "right" && x != 15) || edge == "")) {
         acreGridTile.innerHTML = "&#10004";
