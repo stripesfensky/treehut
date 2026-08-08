@@ -34,6 +34,13 @@ gci.addEventListener("change", async (gciUpload) => {
   }
 });
 
+map.addEventListener("click", (select) => {
+  const selectedAcre = select.target.closest(".acre");
+  if (selectedAcre != null) {
+    console.log(acres.find(acre => acre.name == selectedAcre.id));
+  }
+});
+
 async function getSource(url, regex) {
   const response = await fetch(url);
 
