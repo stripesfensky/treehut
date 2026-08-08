@@ -10,6 +10,7 @@ html {
 
 body {
   background-color: white;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   min-height: calc(100% - 100px);
@@ -17,7 +18,6 @@ body {
   padding: 70px;
   max-width: 590px;
   width: 100%;
-  box-sizing: border-box;
 }
 
 h1 {
@@ -105,4 +105,47 @@ a:hover {
 .acre:active {
   background-color: rgba(255, 255, 255, 0.5);
   background-blend-mode: overlay;
+}
+
+#minimap {
+  border: none;
+  box-sizing: border-box;
+  padding: 40px;
+  width: max(220px, min(calc(100vw - 80px), 510px));
+}
+
+#minimap::backdrop {
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+#acregrid {
+  background-size: cover;
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: repeat(16, minmax(0, 1fr));
+  image-rendering: pixelated;
+  margin: 20px 0px;
+  max-width: 100%;
+}
+
+.tile {
+  align-items: center;
+  aspect-ratio: 1 / 1;
+  color: white;
+  cursor: default;
+  display: flex;
+  font-size: 3.5cqw;
+  justify-content: center;
+}
+
+@media (hover: hover) {
+  :not(:has(.tile:active)) > .tile:hover {
+    outline: 5px solid white;
+    outline-offset: -5px;
+  }
+}
+
+.tile:is(:focus-visible, :active) {
+  outline: 5px solid white;
+  outline-offset: -5px;
 }
