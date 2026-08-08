@@ -25,7 +25,7 @@ gci.addEventListener("change", async (gciUpload) => {
     let townGrid = document.createElement("div");
 
     for (let i = 0; i < acres.length; i++){
-      townGrid.append(acres[i].canvas());
+      townGrid.append(acres[i].returnCanvas());
     }
 
     townGrid.id = "towngrid";
@@ -37,7 +37,7 @@ gci.addEventListener("change", async (gciUpload) => {
 map.addEventListener("click", (select) => {
   const selectedAcre = select.target.closest(".acre");
   if (selectedAcre != null) {
-    console.log(acres.find(acre => acre.name == selectedAcre.id));
+    acres.find(acre => acre.name == selectedAcre.id).returnMiniMap(selectedAcre);
   }
 });
 
