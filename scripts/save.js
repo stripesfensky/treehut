@@ -13,7 +13,7 @@ export async function loadSave(fieldInfo, gciUpload) {
   const gciGameCode = hex.getHexString(gciUint8Array, 0x00, 0x06);
   const gciFileName = hex.getHexString(gciUint8Array, 0x08, 0x1B);
 
-  let saveData;
+  let acres;
 
   if (!(/GA[DEF][EJPU][0X][1X]/.test(gciGameCode) && /Dobutsunomori[PE]_MURA/.test(gciFileName))) {
     common.setMessage("<b>ERROR:</b> The uploaded file is not a properly formatted save file.", "red");
@@ -63,12 +63,12 @@ export async function loadSave(fieldInfo, gciUpload) {
   let saveTownEnd = saveTownStart + saveTownSize;
   let saveTownData = hex.getHexSlice(gciUint8Array, saveTownStart, saveTownEnd);
 
-  saveData = getSaveData(fieldInfo, saveAcreData, saveTownData);
+  acres = getAcres(fieldInfo, saveAcreData, saveTownData);
 
-  return saveData;
+  return acres;
 }
 
-function getSaveData(fieldInfo, saveAcreData, saveTownData) {
+function getAcres(fieldInfo, saveAcreData, saveTownData) {
   if (saveAcreData.length != 140) {
     common.setMessage("The acre data for this save file is invalid.", "red");
     return;
@@ -122,7 +122,7 @@ function getSaveData(fieldInfo, saveAcreData, saveTownData) {
         acreEdge = "right";
       }
 
-      acres[acreArrayIndex] = new field.Acre(acreName, acreEdge, acreBackgroundType);
+      acres[acreArrayIndex] = new field.Acre(acreName, acreEdge, acreBackgroundType, town[acreArrayIndex]);
       acreArrayIndex += 1;
     }
 
