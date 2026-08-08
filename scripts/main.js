@@ -6,7 +6,7 @@ let fieldInfo = await getFieldInfo();
 let gci = document.getElementById("gci");
 let map = document.getElementById("map");
 let upload = document.getElementById("upload");
-let saveData;
+let acres;
 
 if (fieldInfo != null) {
   upload.reset();
@@ -19,13 +19,13 @@ else {
 gci.addEventListener("change", async (gciUpload) => {
   map.innerHTML = "";
   common.setMessage("", "");
-  saveData = await save.loadSave(fieldInfo, gciUpload);
+  acres = await save.loadSave(fieldInfo, gciUpload);
   
-  if (saveData != null) {
+  if (acres != null) {
     let townGrid = document.createElement("div");
 
-    for (let i = 0; i < saveData.length; i++){
-      townGrid.append(saveData[i].svg());
+    for (let i = 0; i < acres.length; i++){
+      townGrid.append(acres[i].canvas());
     }
 
     townGrid.id = "towngrid";
@@ -36,7 +36,7 @@ gci.addEventListener("change", async (gciUpload) => {
 
 async function getSource(url, regex) {
   const response = await fetch(url);
-  
+
   if (response.status != 200) {
     console.error("Could not import \"" + url + "\" (status code: " + response.status + ")");
   } 
