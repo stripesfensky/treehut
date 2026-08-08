@@ -4,7 +4,7 @@ import * as field from "./field.js";
 
 export async function loadSave(fieldInfo, gciUpload) {
   if (gciUpload == null) {
-    common.setMessage("<b>ERROR:</b> This file is empty.", "red");
+    common.setMessage("<b>ERROR:</b> The uploaded file cannot be read.", "red");
     return;
   }
 
@@ -16,7 +16,7 @@ export async function loadSave(fieldInfo, gciUpload) {
   let saveData;
 
   if (!(/GA[DEF][EJPU][0X][1X]/.test(gciGameCode) && /Dobutsunomori[PE]_MURA/.test(gciFileName))) {
-    common.setMessage("<b>ERROR:</b> This file is invalid.", "red");
+    common.setMessage("<b>ERROR:</b> The uploaded file is not a properly formatted save file.", "red");
     return;
   }
 
@@ -69,12 +69,12 @@ export async function loadSave(fieldInfo, gciUpload) {
 }
 
 function getSaveData(fieldInfo, saveAcreData, saveTownData) {
-  if (saveAcreData.length / 2 != 70) {
+  if (saveAcreData.length != 140) {
     common.setMessage("The acre data for this save file is invalid.", "red");
     return;
   }
 
-  if (saveTownData.length / 256 / 2 != 30 ) {
+  if (saveTownData.length != 15360 ) {
     common.setMessage("The foreground data for this save file is invalid.", "red");
     return;
   }
@@ -94,16 +94,21 @@ function getSaveData(fieldInfo, saveAcreData, saveTownData) {
     town[i] = items;
   }
 
-  console.log(town);
+  const fieldInfoMap = new Map();
+
+  for (const fi of fieldInfo) {
+    for (const idx of fi.indices) {
+      fieldInfoMap.set(idx, fi);
+    }
+  }
 
   let acres = [];
   let acreLocationIndex = 0;
   let acreArrayIndex = 0;
 
   for (let i = 0; i < saveAcreData.length; i += 2) {
-    let acreStrId = hex.getBytePairs(saveAcreData, i);
-    let acreIntId = parseInt(acreStrId, 16) >> 2;
-    let acreBackgroundType = fieldInfo.find(fi => fi.indices.includes(acreIntId));
+    let acreIntId = parseInt(hex.getBytePairs(saveAcreData, i), 16) >> 2;
+    let acreBackgroundType = fieldInfoMap.get(acreIntId);
     let acreRow = Math.floor(acreLocationIndex / 7) + 1;
     let acreColumn = (acreLocationIndex % 7) + 1;
 
