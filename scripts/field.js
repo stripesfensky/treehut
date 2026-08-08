@@ -49,22 +49,18 @@ export class Acre {
   backgroundType = new BackgroundType();
   foregroundTiles = [];
 
-  constructor(name, edge, backgroundType) {
+  constructor(name, edge, backgroundType, foregroundTiles) {
     this.name = name;
     this.edge = edge;
     this.backgroundType = backgroundType;
+    this.foregroundTiles = foregroundTiles;
   }
 
-  svg() {
+  canvas() {
     const div = document.createElement("div");
 
     div.className = "acre";
-    div.setAttribute("data-location", this.name);
-    div.setAttribute("data-background", this.backgroundType.name);
-
-    if (this.edge != "") {
-      div.setAttribute("data-edge", this.edge);
-    }
+    div.setAttribute("id", this.name);
 
     const canvas = document.createElement("canvas");
     canvas.width = 16;
