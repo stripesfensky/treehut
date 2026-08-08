@@ -20,22 +20,23 @@ gci.addEventListener("change", async (gciUpload) => {
   map.innerHTML = "";
   common.setMessage("", "");
   saveData = await save.loadSave(fieldInfo, gciUpload);
+  
   if (saveData != null) {
     let townGrid = document.createElement("div");
+
     for (let i = 0; i < saveData.length; i++){
       townGrid.append(saveData[i].svg());
     }
+
     townGrid.id = "towngrid";
     map.innerHTML = "<hr /><h2>Town Map</h2>";
     map.appendChild(townGrid);
-  }
-  else {
-    common.setMessage("<b>ERROR:</b> There was an unknown error that occurred when parsing the save data.", "red");
   }
 });
 
 async function getSource(url, regex) {
   const response = await fetch(url);
+  
   if (response.status != 200) {
     console.error("Could not import \"" + url + "\" (status code: " + response.status + ")");
   } 
