@@ -56,7 +56,7 @@ export class Acre {
     this.foregroundTiles = foregroundTiles;
   }
 
-  canvas() {
+  returnCanvas() {
     const acre = document.createElement("div");
 
     acre.className = "acre";
@@ -68,7 +68,7 @@ export class Acre {
 
     const canvasCtx = canvas.getContext("2d");
 
-    for (let i = 0; i < this.backgroundType.backgroundTiles.length; i++) {
+    for (let i = 0; i < 256; i++) {
       const x = i % 16;
       const y = Math.floor(i / 16);
 
@@ -79,5 +79,51 @@ export class Acre {
     acre.style.backgroundImage = `url("${canvas.toDataURL("image/png")}")`;
 
     return acre;
+  }
+
+  returnMiniMap(selectedAcre) {
+    if (selectedAcre == null) {
+      return;
+    }
+    
+    const miniMap = document.createElement("dialog");
+    miniMap.id = "minimap";
+    miniMap.innerHTML = `<h1>${this.name}</h1>`
+    
+    const acreGrid = document.createElement("div");
+    acreGrid.id = "acregrid";
+    acreGrid.style.backgroundImage = selectedAcre.style.backgroundImage;
+
+    for (let i = 0; i < 256; i++) {
+      const x = i % 16;
+      const y = Math.floor(i / 16);
+      const backgroundType = this.backgroundType.backgroundTiles[i].type;
+      const foregroundTile = this.foregroundTiles[i];
+      const edge = this.edge;
+
+      const acreGridTile = document.createElement("div");
+      acreGridTile.className = "tile";
+      acreGridTile.title = `Row ${y}, Column ${x}: ${backgroundType} / ${foregroundTile})`
+
+      if (backgroundType.match(/.+(GRASS|SOIL)0$/) && ((edge == "left" && x != 0) || (edge == "right" && x != 15) || edge == "")) {
+        acreGridTile.innerHTML = "&#10004";
+        acreGridTile.style.backgroundColor = "rgba(0, 0, 0, 0.15)";
+      }
+
+      acreGrid.appendChild(acreGridTile);
+    }
+
+    miniMap.appendChild(acreGrid);
+
+    miniMap.innerHTML += `<button id="close">Return to map...</button>`;
+
+    document.body.appendChild(miniMap);
+    miniMap.showModal();
+
+    const closeMiniMap = miniMap.querySelector("#close");
+    closeMiniMap.addEventListener("click", () => {
+      miniMap.close();
+      miniMap.remove();
+    });
   }
 }
