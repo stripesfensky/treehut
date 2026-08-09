@@ -8,6 +8,10 @@ html {
   width: 100%;
 }
 
+body, hr, #towngrid, #minimap, #acregrid, .tile {
+  border: 1px dashed darkgray;
+}
+
 body {
   background-color: white;
   box-sizing: border-box;
@@ -44,7 +48,6 @@ ul {
 }
 
 hr {
-  border: 1px dashed lightgray;
   margin: 24px 0px;
 }
 
@@ -78,8 +81,8 @@ a:hover {
 #towngrid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin-top: 10px;
   max-width: 100%;
-  padding-top: 10px;
 }
 
 .acre {
@@ -108,7 +111,6 @@ a:hover {
 }
 
 #minimap {
-  border: none;
   box-sizing: border-box;
   padding: 40px;
   width: max(220px, min(calc(100vw - 80px), 510px));
@@ -118,14 +120,17 @@ a:hover {
   background-color: rgba(0, 0, 0, 0.25);
 }
 
-#acregrid {
-  background-size: cover;
+#acregrid, #legend {
   container-type: inline-size;
   display: grid;
   grid-template-columns: repeat(16, minmax(0, 1fr));
-  image-rendering: pixelated;
   margin: 20px 0px;
   max-width: 100%;
+}
+
+#acregrid {
+  background-size: cover;
+  image-rendering: pixelated;
 }
 
 .tile {
@@ -140,12 +145,35 @@ a:hover {
 
 @media (hover: hover) {
   :not(:has(.tile:active)) > .tile:hover {
-    outline: 5px solid white;
-    outline-offset: -5px;
+    outline: 3px solid white;
+    outline-offset: -3px;
   }
 }
 
 .tile:is(:focus-visible, :active) {
-  outline: 5px solid white;
-  outline-offset: -5px;
+  outline: 3px solid white;
+  outline-offset: -3px;
+}
+
+.tile.valid {
+  background-color: rgba(0, 0, 0, 0.20);
+}
+
+.tile.valid::after {
+  content: "\2714";
+}
+
+.tile.restricted {
+  background-image: conic-gradient(rgba(0, 0, 0, 0.15) 0% 25%, transparent 25% 50%, rgba(0, 0, 0, 0.15) 50% 75%, transparent 75% 100%);
+  background-size: 50% 50%;
+  background-repeat: repeat;
+}
+
+.tile.occupied {
+  background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.25) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.25) 50%, rgba(0, 0, 0, 0.25) 75%, transparent 75%);
+  background-size: cover;
+}
+
+#legend .tile {
+  outline-color: black;
 }
