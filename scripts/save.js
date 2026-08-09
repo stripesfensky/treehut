@@ -113,7 +113,7 @@ function getAcres(fieldInfo, saveAcreData, saveTownData) {
     let acreColumn = (acreLocationIndex % 7) + 1;
 
     if ((acreRow >= 2 && acreRow <= 7) && (acreColumn >= 2 && acreColumn <= 6)) {
-      let acreName = String.fromCharCode(64 + (acreRow - 1)) + (acreColumn - 1);
+      let acreName = String.fromCharCode(64 + (acreRow - 1)) + "-" + (acreColumn - 1);
       let acreEdge = "";
       if (acreColumn == 2) {
         acreEdge = "left";
