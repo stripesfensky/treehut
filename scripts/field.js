@@ -88,7 +88,7 @@ export class Acre {
     
     const miniMap = document.createElement("dialog");
     miniMap.id = "minimap";
-    miniMap.innerHTML = `<h1>${this.name}</h1>`
+    miniMap.innerHTML = `<h1>Minimap for Acre ${this.name}</h1>`
     
     const acreGrid = document.createElement("div");
     acreGrid.id = "acregrid";
@@ -105,9 +105,16 @@ export class Acre {
       acreGridTile.className = "tile";
       acreGridTile.title = `Row ${y}, Column ${x}: ${backgroundType} / ${foregroundTile}`
 
-      if (backgroundType.match(/.+(GRASS|SOIL)0$/) && ((edge == "left" && x != 0) || (edge == "right" && x != 15) || edge == "")) {
-        acreGridTile.innerHTML = "&#10004";
-        acreGridTile.style.backgroundColor = "rgba(0, 0, 0, 0.15)";
+      if (backgroundType.match(/.+(GRASS|SOIL)0$/) && ((edge == "left" && x != 0) || (edge == "right" && x != 15) || edge == "") && foregroundTile != "0xFFFF") {
+        acreGridTile.classList.add("valid");
+      }
+
+      if (foregroundTile == "0xFFFF") {
+        acreGridTile.classList.add("restricted");
+      }
+
+      if (foregroundTile != "0x0000" && foregroundTile != "0xFFFF") {
+        acreGridTile.classList.add("occupied");
       }
 
       acreGrid.appendChild(acreGridTile);
@@ -115,7 +122,20 @@ export class Acre {
 
     miniMap.appendChild(acreGrid);
 
-    miniMap.innerHTML += `<button id="close">Return to map...</button>`;
+    const legend = document.createElement("div");
+    legend.id = "legend";
+
+    legend.append(
+      createLegendEntry(["valid"], "Valid", "You can plant a tree here."),
+      createLegendEntry(["restricted"], "Restricted", "You can place an item or plant a tree here."),
+      createLegendEntry(["occupied"], "Occupied", "An item is placed here."),
+      createLegendEntry(["valid", "occupied"], "Valid/occupied", "You can plant a tree here, but an item is placed here."),      
+    );
+
+    miniMap.innerHTML += "<hr /><h2>Minimap Legend</h2>";
+    miniMap.append(legend);
+
+    miniMap.innerHTML += "<hr /><button id=\"close\">Return to map...</button>";
 
     document.body.appendChild(miniMap);
     miniMap.showModal();
@@ -126,4 +146,25 @@ export class Acre {
       miniMap.remove();
     });
   }
+}
+
+function createLegendEntry(tileClasses, name, description) {
+  const entry = document.createElement("div");
+  entry.className = "entry";
+
+  const tile = document.createElement("div");
+  tile.title = name + ": " + description;
+  tile.classList.add("tile");
+  
+  for (let i = 0; i < tileClasses.length; i++) {
+    tile.classList.add(tileClasses[i]);
+  }
+
+  const text = document.createElement("p");
+  text.className = "text";
+  text.innerHTML = `<b>${name}:</b> ${description}`;
+
+  entry.append(tile, text);
+
+  return entry;
 }
