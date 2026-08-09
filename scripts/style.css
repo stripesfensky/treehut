@@ -122,13 +122,13 @@ a:hover {
 
 #acregrid, #legend {
   container-type: inline-size;
-  display: grid;
-  grid-template-columns: repeat(16, minmax(0, 1fr));
   margin: 20px 0px;
   max-width: 100%;
 }
 
 #acregrid {
+  display: grid;
+  grid-template-columns: repeat(16, minmax(0, 1fr));
   background-size: cover;
   image-rendering: pixelated;
 }
@@ -174,6 +174,24 @@ a:hover {
   background-size: cover;
 }
 
+#legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#legend .entry {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
 #legend .tile {
-  outline-color: black;
+  flex-shrink: 0;
+  outline-style: none;
+  width: calc(100% / 16);
+}
+
+#legend .text {
+  margin-top: 0;
 }
