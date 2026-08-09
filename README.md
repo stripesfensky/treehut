@@ -1,7 +1,7 @@
 # Animal Crossing Map Viewer
 The purpose of this map viewer is to see where trees can grow in your town.
 
-The map viewer can reveal which tiles in an acre are good to grow, but <u>does not</u> take objects such as existing trees, rocks, villager houses, or other structures into consideration. 
+The map viewer can reveal which tiles in an acre are good to grow, but <ins>does not</ins> take objects such as existing trees, rocks, villager houses, or other structures into consideration. 
 
 ## Credits
 * [ACreTeam](https://github.com/ACreTeam/ac-decomp) for decompilation work to understand the acre data format.
