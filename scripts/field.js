@@ -135,7 +135,7 @@ export class Acre {
       createLegendEntry(["valid"], "Valid", "You can plant a tree here."),
       createLegendEntry(["restricted"], "Restricted", "You cannot place an item or plant a tree here."),
       createLegendEntry(["occupied"], "Occupied", "An item is placed here."),
-      createLegendEntry(["valid", "occupied"], "Valid/occupied", "You can plant a tree here, but an item is placed here."),      
+      createLegendEntry(["valid", "occupied"], "Valid/occupied", "You can plant a tree here, but another item (or tree) is already placed here."),      
     );
 
     const closeHr = document.createElement("hr");
