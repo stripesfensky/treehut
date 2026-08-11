@@ -113,11 +113,11 @@ a:hover {
 #minimap {
   box-sizing: border-box;
   padding: 40px;
-  width: max(220px, min(calc(100vw - 80px), 510px));
+  width: min(calc(100vw - 20px), 510px);
 }
 
 #minimap::backdrop {
-  background-color: rgba(0, 0, 0, 0.25);
+  background-color: rgba(0, 0, 0, 0.50);
 }
 
 #acregrid, #legend {
@@ -160,7 +160,8 @@ a:hover {
 }
 
 .tile.valid::after {
-  content: "\2714";
+  content: "\2714\FE0E";
+  font-family: -apple-system, sans-serif;
 }
 
 .tile.restricted {
@@ -194,4 +195,15 @@ a:hover {
 
 #legend .text {
   margin-top: 0;
+}
+
+#minimap h1:focus, h1:focus-visible {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 768px) {
+  #minimap {
+    max-height: 80dvh;
+  }
 }
