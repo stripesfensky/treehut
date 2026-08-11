@@ -88,7 +88,11 @@ export class Acre {
     
     const miniMap = document.createElement("dialog");
     miniMap.id = "minimap";
-    miniMap.innerHTML = `<h1>Minimap for Acre ${this.name}</h1>`
+
+    const miniMapHeader = document.createElement("h1");
+    miniMapHeader.textContent = `Minimap for Acre ${this.name}`;
+    miniMapHeader.tabIndex = -1;
+    miniMapHeader.autofocus = true;
     
     const acreGrid = document.createElement("div");
     acreGrid.id = "acregrid";
@@ -120,7 +124,9 @@ export class Acre {
       acreGrid.appendChild(acreGridTile);
     }
 
-    miniMap.appendChild(acreGrid);
+    const legendHr = document.createElement("hr");
+    const legendHeader = document.createElement("h2");
+    legendHeader.textContent = "Minimap Legend";
 
     const legend = document.createElement("div");
     legend.id = "legend";
@@ -132,10 +138,12 @@ export class Acre {
       createLegendEntry(["valid", "occupied"], "Valid/occupied", "You can plant a tree here, but an item is placed here."),      
     );
 
-    miniMap.innerHTML += "<hr /><h2>Minimap Legend</h2>";
-    miniMap.append(legend);
-
-    miniMap.innerHTML += "<hr /><button id=\"close\">Return to map...</button>";
+    const closeHr = document.createElement("hr");
+    const closeButton = document.createElement("button");
+    closeButton.id = "close";
+    closeButton.textContent = "Return to map...";
+    
+    miniMap.append(miniMapHeader, acreGrid, legendHr, legendHeader, legend, closeHr, closeButton);
 
     document.body.appendChild(miniMap);
     miniMap.showModal();
