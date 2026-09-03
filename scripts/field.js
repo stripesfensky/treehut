@@ -61,6 +61,7 @@ export class Acre {
 
     acre.className = "acre";
     acre.setAttribute("id", this.name);
+    acre.title = `Acre ${this.name}: ${this.backgroundType.name}`
 
     const canvas = document.createElement("canvas");
     canvas.width = 16;
